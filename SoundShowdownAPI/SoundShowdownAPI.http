@@ -1,0 +1,6 @@
+@SoundShowdownAPI_HostAddress = http://localhost:5230
+
+GET {{SoundShowdownAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
