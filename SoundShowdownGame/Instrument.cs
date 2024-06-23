@@ -10,6 +10,22 @@
             Woodwind,
             String
         }
+        public enum InstrumentName // Change later to be a database with instrument names
+        {
+            Piano,
+            Flute,
+            Mic,
+            Drums,
+            Sampler,
+            TalkBox,
+            Trumpet,
+            Trombone,
+            Clarinet,
+            Violin,
+            ElectricGuitar,
+            Autotune,
+            BassGuitar
+        }
 
         public string Name { get; set; } = name;
         public InstrumentType Type { get; set; } = type; // Type of instrument
