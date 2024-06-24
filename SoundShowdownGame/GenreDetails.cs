@@ -3,16 +3,8 @@ using static SoundShowdownGame.Instrument;
 
 namespace SoundShowdownGame
 {
-    public class Genre(Genre.GenreName name, string description, string bonus, Genre.SpecialPowers special)
+    public class GenreDetails(GenreName name, string description, GenreDetails.SpecialPowers special)
     {
-        public enum GenreName
-        {
-            Classical,
-            Jazz,
-            HipHop,
-            Rock,
-            Pop
-        }
         public enum SpecialPowers
         {
             CalmingNoise,
@@ -33,8 +25,7 @@ namespace SoundShowdownGame
         }.ToImmutableDictionary();
 
         public GenreName Name { get; set; } = name;
-        public string Description { get; set; } =description;
-        public string Bonus { get; set; } = bonus;
+        public string Description { get; set; } = description;
         public SpecialPowers Special { get; set; } = special;
     }
 }

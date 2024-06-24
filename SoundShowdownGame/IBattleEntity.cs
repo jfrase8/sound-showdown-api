@@ -4,19 +4,11 @@
     {
         int Health { get; set; } // Health points
         bool IsDefeated { get; set; } // True if battle entity runs out of health
-        Type EntityType { get; set; } // What class this battle entity is
 
         // Taking damage reduces your health points
-        void TakeDamage(int damage)
-        {
-            Health -= damage;
+        void TakeDamage(int damage);
 
-            // Check if you ran out of health points
-            if (Health <= 0) IsDefeated = true;
-        }
-
-        // Default method so battle entities can do something specific when defeated. Parameter specifies who got defeated (Player, Enemy, Musician)
+        // Default method so battle entities can do something specific when defeated
         void Defeated();
-        void Attack();
     }
 }
