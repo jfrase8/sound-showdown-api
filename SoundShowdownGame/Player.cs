@@ -2,7 +2,7 @@
 
 namespace SoundShowdownGame
 {
-    
+
     public class Player(string id) : IBattleEntity
     {
         public const int DefaultHealth = 10; // Starting Health Points
@@ -60,4 +60,5 @@ namespace SoundShowdownGame
                 }
             }
         }
+    }
 }
