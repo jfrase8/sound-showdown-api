@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SoundShowdownGame
 {
-    public class ExampleClient : ISoundShowdownEventListener
+    public class ExampleClient
     {
         public void OnGenreChosen(object sender, GenreChosenEventArgs e)
         {

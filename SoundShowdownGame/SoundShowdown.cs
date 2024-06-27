@@ -19,8 +19,7 @@ namespace SoundShowdownGame
         //private List<ISoundShowdownEventListener> EventListeners { get; set; }
 
         // Events
-        public event EventHandler<GenreChosenEventArgs>? GenreChosenEvent;
-        public event EventHandler<ActionChosenEventArgs>? ActionChosenEvent;
+        public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent; 
 
         public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck) 
         {
@@ -28,16 +27,6 @@ namespace SoundShowdownGame
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
             //EventListeners = [];
-        }
-
-        public void AddEventListener(ISoundShowdownEventListener listener)
-        {
-            //if (!EventListeners.Contains(listener)) EventListeners.Add(listener);
-        }
-
-        protected virtual void EmitToPlayer<T>(EventHandler<T>? handlerType, T e)
-        {
-            handlerType?.Invoke(this, e);
         }
 
         public void PlayerChooseGenre(string playerId, GenreName genreName)
@@ -48,9 +37,8 @@ namespace SoundShowdownGame
             // Set player's genre
             player.Genre = genreName;
 
-            // Send event to all players
-            PlayerList.ForEach(_player => { EmitToPlayer(GenreChosenEvent, new GenreChosenEventArgs(player, genreName)); });
-            //EventListeners.ForEach(listener => listener.OnGenreChosen(e));
+            // Send event to all players (NOT BEING IMPLEMENTED HERE)
+            // GenreChosenEvent?.Invoke(this, new GenreChosenEventArgs(player, genreName));
 
             // Check if all players have chose a genre
             if (PlayerList.All(p => p.Genre != null))
@@ -76,10 +64,9 @@ namespace SoundShowdownGame
             switch (action)
             {
                 case Action.Fight_Enemies:
-                    // Add listeners to show the card drawn (NEEDS IMPLEMENTATION)
                     CurrentEnemy = DrawEnemyCard(player);
-                    // Send event to all players
-                    PlayerList.ForEach(_player => { EmitToPlayer(ActionChosenEvent, new ActionChosenEventArgs(player, Action.Fight_Enemies)); });
+                    // Send event to all players (NOT BEING IMPLEMENTED HERE)
+                    //ActionChosenEvent?.Invoke(this, new ActionChosenEventArgs(player, action));
                     break;
                     //case Action.ChallengeMusician:
                     //    ChallengeMusician();
