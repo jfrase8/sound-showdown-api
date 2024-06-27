@@ -10,7 +10,7 @@ namespace SoundShowdownGame
     {
         Classical,
         Jazz,
-        HipHop,
+        Hip_Hop,
         Rock,
         Pop
     }

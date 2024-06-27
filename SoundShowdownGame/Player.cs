@@ -9,7 +9,7 @@ namespace SoundShowdownGame
         public const int DefaultCoins = 20; // Starting amount of coins
         public const int DefaultActions = 3; // Starting amount of actions
 
-        public string ID { get; init; } = id; // Unique player id
+        public string Id { get; init; } = id; // Unique player id
         public GenreName? Genre { get; set; } // Chosen class (Genre) of the player
         public int Health { get; set; } = DefaultHealth; // Total current health points
         public int Coins { get; set; } = DefaultCoins; // Total current coins

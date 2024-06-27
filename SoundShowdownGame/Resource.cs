@@ -1,9 +1,9 @@
 ﻿namespace SoundShowdownGame
 {
-    public class Resource(string Name, string Description, int SellValue)
+    public class Resource(string name, string description, int sellValue)
     {
-        public string Name { get; set; } = Name;
-        public string Description { get; set; } = Description;
-        public int SellValue { get; set;} = SellValue; // How much you can sell the resources for
+        public string Name { get; set; } = name;
+        public string Description { get; set; } = description;
+        public int SellValue { get; set;} = sellValue; // How much you can sell the resources for
     }
 }

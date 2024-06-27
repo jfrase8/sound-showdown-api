@@ -8,11 +8,11 @@ namespace SoundShowdownGame
 {
     public enum Action
     {
-        FightEnemies,
-        ChallengeMusician,
+        Fight_Enemies,
+        Challenge_Musician,
         Train,
         Shop,
         Scavenge,
-        UpgradeInstruments
+        Upgrade_Instruments
     }
 }

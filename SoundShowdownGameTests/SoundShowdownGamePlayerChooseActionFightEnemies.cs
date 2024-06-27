@@ -19,7 +19,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.FightEnemies);
+                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException e)

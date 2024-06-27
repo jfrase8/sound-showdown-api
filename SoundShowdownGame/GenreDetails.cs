@@ -7,21 +7,21 @@ namespace SoundShowdownGame
     {
         public enum SpecialPowers
         {
-            CalmingNoise,
+            Calming_Noise,
             Improvisation,
             Sampling,
 
             /* Still needs new powers */
             // NEEDS IMPLEMENTATION
-            SpecialPower4,
-            SpecialPower5
+            Special_Power_4,
+            Special_Power_5
         }
         // Immutable Dictionary that has instruments specific to a genre
         public static readonly ImmutableDictionary<GenreName, InstrumentName[]> GenreInstruments = new Dictionary<GenreName, InstrumentName[]>()
         {
-            {GenreName.Rock, [InstrumentName.Mic, InstrumentName.ElectricGuitar, InstrumentName.Drums, InstrumentName.BassGuitar] },
+            {GenreName.Rock, [InstrumentName.Mic, InstrumentName.Electric_Guitar, InstrumentName.Drums, InstrumentName.Bass_Guitar] },
             {GenreName.Classical, [InstrumentName.Violin, InstrumentName.Piano, InstrumentName.Clarinet, InstrumentName.Flute] },
-            {GenreName.HipHop, [InstrumentName.Mic, InstrumentName.Sampler, InstrumentName.Drums, InstrumentName.BassGuitar] },
+            {GenreName.Hip_Hop, [InstrumentName.Mic, InstrumentName.Sampler, InstrumentName.Drums, InstrumentName.Bass_Guitar] },
         }.ToImmutableDictionary();
 
         public GenreName Name { get; set; } = name;

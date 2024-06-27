@@ -17,14 +17,14 @@
             Mic,
             Drums,
             Sampler,
-            TalkBox,
+            Talk_Box,
             Trumpet,
             Trombone,
             Clarinet,
             Violin,
-            ElectricGuitar,
-            Autotune,
-            BassGuitar
+            Electric_Guitar,
+            Auto_Tune,
+            Bass_Guitar
         }
 
         public string Name { get; set; } = name;

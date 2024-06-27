@@ -18,7 +18,7 @@
             if (Health <= 0) IsDefeated = true;
         }
 
-        // Defeated() is called when an enemy has ran out of health.
+        // Defeated() is called when an enemy has run out of health.
         public void Defeated()
         {
             // When an enemy is defeated, drop its loot (give that loot to the player)

@@ -37,13 +37,11 @@ namespace SoundShowdownGame
             ];
 
             // Shuffle two cards in deck 100 times
-            Random r = new Random();
-            for (int i = cards.Length - 1; i > 0; i--)
+            Random r = new();
+            for (var i = cards.Length - 1; i > 0; i--)
             {
-                int j = r.Next(i + 1);
-                Enemy temp = cards[i];
-                cards[i] = cards[j];
-                cards[j] = temp;
+                var j = r.Next(i + 1);
+                (cards[i], cards[j]) = (cards[j], cards[i]);
             }
 
             return new Deck<Enemy>("Enemy Deck", "Deck full of enemy cards.", new Stack<Enemy>(cards));

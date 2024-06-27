@@ -8,6 +8,7 @@ namespace SoundShowdownGame
 {
     public interface ISoundShowdownEventListener
     {
-        void OnGenreChosen(GenreChosenEvent e);
+        void OnGenreChosen(object sender, GenreChosenEventArgs e);
+        void OnActionChosen(object sender, ActionChosenEventArgs e);
     }
 }

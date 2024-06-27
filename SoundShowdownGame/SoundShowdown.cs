@@ -16,33 +16,41 @@ namespace SoundShowdownGame
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
-        private List<ISoundShowdownEventListener> EventListeners { get; set; }
+        //private List<ISoundShowdownEventListener> EventListeners { get; set; }
 
+        // Events
+        public event EventHandler<GenreChosenEventArgs>? GenreChosenEvent;
+        public event EventHandler<ActionChosenEventArgs>? ActionChosenEvent;
 
-        public SoundShowdown(List<string> playerIDs, Deck<Enemy> enemyDeck) 
+        public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck) 
         {
-            PlayerList = playerIDs.Select(playerID => new Player(playerID)).ToList();
+            PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
-            EventListeners = new List<ISoundShowdownEventListener>();
+            //EventListeners = [];
         }
 
         public void AddEventListener(ISoundShowdownEventListener listener)
         {
-            if (!EventListeners.Contains(listener)) EventListeners.Add(listener);
+            //if (!EventListeners.Contains(listener)) EventListeners.Add(listener);
         }
 
-        public void PlayerChooseGenre(string playerID, GenreName genreName)
+        protected virtual void EmitToPlayer<T>(EventHandler<T>? handlerType, T e)
         {
-            Player player = ValidatePlayer(playerID);
+            handlerType?.Invoke(this, e);
+        }
+
+        public void PlayerChooseGenre(string playerId, GenreName genreName)
+        {
+            Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Choose_Genre);
 
             // Set player's genre
             player.Genre = genreName;
 
-            GenreChosenEvent e = new GenreChosenEvent(player.ID, genreName);
-            EventListeners.ForEach(listener => listener.OnGenreChosen(e));
-
+            // Send event to all players
+            PlayerList.ForEach(_player => { EmitToPlayer(GenreChosenEvent, new GenreChosenEventArgs(player, genreName)); });
+            //EventListeners.ForEach(listener => listener.OnGenreChosen(e));
 
             // Check if all players have chose a genre
             if (PlayerList.All(p => p.Genre != null))
@@ -56,10 +64,10 @@ namespace SoundShowdownGame
             return PlayerList[0];
         }
 
-        public void PlayerChooseAction(string playerID, Action action)
+        public void PlayerChooseAction(string playerId, Action action)
         {
             // Validate player and game state
-            Player player = ValidatePlayer(playerID);
+            Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Choose_Action);
 
             // Use up one action
@@ -67,9 +75,11 @@ namespace SoundShowdownGame
 
             switch (action)
             {
-                case Action.FightEnemies:
+                case Action.Fight_Enemies:
                     // Add listeners to show the card drawn (NEEDS IMPLEMENTATION)
                     CurrentEnemy = DrawEnemyCard(player);
+                    // Send event to all players
+                    PlayerList.ForEach(_player => { EmitToPlayer(ActionChosenEvent, new ActionChosenEventArgs(player, Action.Fight_Enemies)); });
                     break;
                     //case Action.ChallengeMusician:
                     //    ChallengeMusician();
@@ -89,10 +99,10 @@ namespace SoundShowdownGame
             }
         }
 
-        public AttackInfo Attack(string playerID)
+        public AttackInfo Attack(string playerId)
         {
             // Validations
-            IBattleEntity player = ValidatePlayer(playerID);
+            IBattleEntity player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Attack);
             if (CurrentEnemy == null) throw new SoundShowdownException("Enemy card was not drawn. There is no current enemy.");
 
@@ -111,8 +121,8 @@ namespace SoundShowdownGame
             else
             {
                 player.TakeDamage(CurrentEnemy.Damage);
-                if (player.IsDefeated) battleResult = BattleWinner.Enemy;
-                else battleResult = BattleWinner.None;
+
+                battleResult = player.IsDefeated ? BattleWinner.Enemy : BattleWinner.None;
             }
 
             // Set Game state based on battleResult
@@ -151,14 +161,14 @@ namespace SoundShowdownGame
             ActionsCount = 3;
         }
 
-        private Player ValidatePlayer(string playerID)
+        private Player ValidatePlayer(string playerId)
         {
             // Find player. If null, throw SoundShowdownException
-            Player player = PlayerList.Find(p => p.ID == playerID) ?? throw new SoundShowdownException($"Player not found: {playerID}.");
+            Player player = PlayerList.Find(p => p.Id == playerId) ?? throw new SoundShowdownException($"Player not found: {playerId}.");
 
             // Check if its players turn
             Player turnPLayer = GetTurnPlayer();
-            if (turnPLayer != player) throw new SoundShowdownException($"It is not this players turn: {playerID}.");
+            if (turnPLayer != player) throw new SoundShowdownException($"It is not this players turn: {playerId}.");
 
             return turnPLayer;
         }
