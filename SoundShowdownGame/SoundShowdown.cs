@@ -63,9 +63,10 @@ namespace SoundShowdownGame
             switch (action)
             {
                 case Action.Fight_Enemies:
+                    // Get the drawn enemy card
                     CurrentEnemy = DrawEnemyCard(player);
-                    // Send event to all players (NOT BEING IMPLEMENTED HERE)
-                    //ActionChosenEvent?.Invoke(this, new ActionChosenEventArgs(player, action));
+                    // Throw event
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
                     //case Action.ChallengeMusician:
                     //    ChallengeMusician();

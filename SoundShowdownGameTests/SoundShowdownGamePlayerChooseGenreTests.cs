@@ -92,12 +92,26 @@ namespace SoundShowdownGameTests
         {
             SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
 
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
+
+            game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
+            {
+                events.Add(args);
+            };
+
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
             game.PlayerChooseGenre("sad83908230", GenreName.Rock);
 
             Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
             Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
+
+            Assert.AreEqual(2, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[1].EventType);
+            Assert.IsTrue(events[1] is GenreChosenEvent);
+            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[1];
+            Assert.AreEqual("sad83908230", genreChosenEvent.Player.Id);
+            Assert.AreEqual(GenreName.Rock, genreChosenEvent.Genre);
         }        
     }
 }
