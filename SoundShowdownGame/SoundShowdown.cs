@@ -16,7 +16,6 @@ namespace SoundShowdownGame
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
-        //private List<ISoundShowdownEventListener> EventListeners { get; set; }
 
         // Events
         public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent; 
@@ -38,7 +37,7 @@ namespace SoundShowdownGame
             player.Genre = genreName;
 
             // Send event to all players (NOT BEING IMPLEMENTED HERE)
-            // GenreChosenEvent?.Invoke(this, new GenreChosenEventArgs(player, genreName));
+            SoundShowdownEvent?.Invoke(this, new GenreChosenEvent(player, genreName));
 
             // Check if all players have chose a genre
             if (PlayerList.All(p => p.Genre != null))

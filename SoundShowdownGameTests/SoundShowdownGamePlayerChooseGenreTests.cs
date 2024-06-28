@@ -1,6 +1,7 @@
 ﻿using SoundShowdownGame;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,12 +65,26 @@ namespace SoundShowdownGameTests
         {
             SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
 
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
+
+            game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
+            {
+                events.Add(args);
+            };
+
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
 
-            Assert.AreEqual("sad83908230", game.GetTurnPlayer().ID);
+            Assert.AreEqual("sad83908230", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Genre, game.CurrentGameState);
-            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.ID == "1hsdfosdn2").Genre);
-            Assert.AreEqual("sad83908230", game.PlayerList[0].ID);
+            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
+            Assert.AreEqual("sad83908230", game.PlayerList[0].Id);
+
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[0].EventType);
+            Assert.IsTrue(events[0] is GenreChosenEvent);
+            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[0];
+            Assert.AreEqual("1hsdfosdn2", genreChosenEvent.Player.Id);
+            Assert.AreEqual(GenreName.Pop, genreChosenEvent.Genre);
         }
 
         [TestMethod]
@@ -80,9 +95,9 @@ namespace SoundShowdownGameTests
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
             game.PlayerChooseGenre("sad83908230", GenreName.Rock);
 
-            Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().ID);
+            Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
-            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.ID == "1hsdfosdn2").Genre);
-        }
+            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
+        }        
     }
 }

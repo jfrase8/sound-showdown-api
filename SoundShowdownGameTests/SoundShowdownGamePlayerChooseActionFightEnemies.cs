@@ -38,7 +38,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.FightEnemies);
+                game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException e)
@@ -57,7 +57,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.FightEnemies);
+                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException e)
@@ -77,7 +77,7 @@ namespace SoundShowdownGameTests
 
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
 
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.FightEnemies);
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
         }
@@ -90,9 +90,9 @@ namespace SoundShowdownGameTests
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
             game.PlayerChooseGenre("sad83908230", GenreName.Rock);
 
-            Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().ID);
+            Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
-            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.ID == "1hsdfosdn2").Genre);
+            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
         }
     }
 }

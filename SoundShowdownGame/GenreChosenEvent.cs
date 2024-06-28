@@ -1,6 +1,6 @@
 ﻿namespace SoundShowdownGame
 {
-    public class GenreChosenEventArgs(SoundShowdownEventType eventType, Player player, GenreName genre) : SoundShowdownEventArgs(eventType)
+    public class GenreChosenEvent(Player player, GenreName genre) : SoundShowdownEventArgs(SoundShowdownEventType.GenreChosen)
     {
         public Player Player { get; private set; } = player;
         public GenreName Genre { get; private set; } = genre;
