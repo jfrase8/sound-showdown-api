@@ -24,7 +24,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
                 Assert.Fail("PlayerChooseGenre should have thrown an exception");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
 
             }
@@ -40,7 +40,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseGenre("11111111", GenreName.Pop);
                 Assert.Fail("PlayerChooseGenre should have thrown an exception because of invalid player ID");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
             }
         }
@@ -55,7 +55,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseGenre("sad83908230", GenreName.Pop);
                 Assert.Fail("PlayerChooseGenre should have thrown an exception because of wrong player");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
             }
         }

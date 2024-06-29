@@ -10,6 +10,7 @@ namespace SoundShowdownGame
     {
         public int Roll {  get; set; }
         public int Damage { get; set; }
+        public BattleWinner BattleResult { get; set; }
 
         // Calculates the damage that a player does to an enemy
         public void CalcDamage(Enemy enemy, Player player)

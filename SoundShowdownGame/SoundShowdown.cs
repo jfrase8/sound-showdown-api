@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,47 +87,60 @@ namespace SoundShowdownGame
             }
         }
 
-        public AttackInfo Attack(string playerId)
+        public void Attack(string playerId)
         {
             // Validations
-            IBattleEntity player = ValidatePlayer(playerId);
+            Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Attack);
             if (CurrentEnemy == null) throw new SoundShowdownException("Enemy card was not drawn. There is no current enemy.");
 
             // Attack info object
             AttackInfo attackInfo = new() { Roll = Dice.RollDie() };
-            attackInfo.CalcDamage((Enemy)CurrentEnemy, (Player)player);
+            attackInfo.CalcDamage(CurrentEnemy, player);
 
             // Check if enemy or player was defeated
-            BattleWinner battleResult = BattleWinner.None;
             CurrentEnemy.TakeDamage(attackInfo.Damage);
             if (CurrentEnemy.IsDefeated)
             {
-                battleResult = BattleWinner.Player;
+                attackInfo.BattleResult = BattleWinner.Player;
                 EnemiesDefeated++;
             }
             else
             {
-                player.TakeDamage(CurrentEnemy.Damage);
+                player.TakeDamage(CurrentEnemy.Damage, CurrentEnemy);
 
-                battleResult = player.IsDefeated ? BattleWinner.Enemy : BattleWinner.None;
+                attackInfo.BattleResult = player.IsDefeated ? BattleWinner.Enemy : BattleWinner.None;
             }
 
             // Set Game state based on battleResult
-            switch (battleResult)
+            CurrentGameState = attackInfo.BattleResult switch
             {
-                case BattleWinner.Player:
-                    CurrentGameState = GameState.Awaiting_Player_Fight_Or_End_Action;
-                    break;
-                case BattleWinner.Enemy:
-                    CurrentGameState = GameState.Awaiting_Player_Choose_Action;
-                    break;
-                case BattleWinner.None:
-                    CurrentGameState = GameState.Awaiting_Player_Attack;
-                    break;
-            }
+                BattleWinner.Player => GameState.Awaiting_Player_Fight_Or_End_Action,
+                BattleWinner.Enemy => GameState.Awaiting_Player_Choose_Action,
+                BattleWinner.None => GameState.Awaiting_Player_Attack,
+                BattleWinner.Musician => throw new SoundShowdownException("Musician should not have won the battle."),
+                _ => throw new SoundShowdownException("Invalid value for BattleResult.")
+            };
 
-            return attackInfo;
+            // NEEDS IMPLEMENTATION
+            //SoundShowdown?.Invoke(this, new AttackEvent(player, attackInfo))
+        }
+
+        // Called if the player decides to not fight any more enemies
+        public void EndFightAction(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Fight_Or_End_Action);
+
+            // Update the game state
+            CurrentGameState = GameState.Awaiting_Player_Choose_Action;
+
+            // Player adds accumulated resources to inventory
+            player.Inventory.GainResources();
+
+            // NEEDS IMPLEMENTATION
+            //SoundShowdown?.Invoke(this, new EndFightEvent(player))
         }
 
         private void OnEndOfTurn()
@@ -170,7 +184,10 @@ namespace SoundShowdownGame
             CurrentGameState = GameState.Awaiting_Player_Attack;
 
             // Draw an enemy from the enemies deck
-             return EnemyDeck.Draw();
+            Enemy enemy = EnemyDeck.Draw();
+            enemy.AttackingPlayer = player;
+
+            return enemy;
         }
     }
 }

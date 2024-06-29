@@ -23,7 +23,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
 
             }
@@ -42,7 +42,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
 
             }
@@ -61,7 +61,7 @@ namespace SoundShowdownGameTests
                 game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
-            catch (SoundShowdownException e)
+            catch (SoundShowdownException)
             {
 
             }
