@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShowdownAPI", "SoundShowdownAPI\SoundShowdownAPI.csproj", "{083C5800-3CD3-4617-9A29-A723CCF0B750}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundShowdownAPI", "SoundShowdownAPI\SoundShowdownAPI.csproj", "{083C5800-3CD3-4617-9A29-A723CCF0B750}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundShowdownGame", "SoundShowdownGame\SoundShowdownGame.csproj", "{F198D58D-8154-4969-8DE5-0883EBEA0A51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShowdownGameTests", "SoundShowdownGameTests\SoundShowdownGameTests.csproj", "{1EC88A39-2DCD-45CD-AA9C-C96CFDF66523}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{083C5800-3CD3-4617-9A29-A723CCF0B750}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{083C5800-3CD3-4617-9A29-A723CCF0B750}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{083C5800-3CD3-4617-9A29-A723CCF0B750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F198D58D-8154-4969-8DE5-0883EBEA0A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F198D58D-8154-4969-8DE5-0883EBEA0A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F198D58D-8154-4969-8DE5-0883EBEA0A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F198D58D-8154-4969-8DE5-0883EBEA0A51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC88A39-2DCD-45CD-AA9C-C96CFDF66523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC88A39-2DCD-45CD-AA9C-C96CFDF66523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC88A39-2DCD-45CD-AA9C-C96CFDF66523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC88A39-2DCD-45CD-AA9C-C96CFDF66523}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
