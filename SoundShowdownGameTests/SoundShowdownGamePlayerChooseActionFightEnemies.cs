@@ -88,6 +88,7 @@ namespace SoundShowdownGameTests
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
 
+            // Test Events
             Assert.AreEqual(3, events.Count);
             Assert.AreEqual(SoundShowdownEventType.ActionChosen, events[2].EventType);
             Assert.IsTrue(events[2] is ActionChosenEvent);

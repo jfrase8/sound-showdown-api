@@ -4,5 +4,6 @@
     {
         GenreChosen,
         ActionChosen,
+        Attack
     }
 }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SoundShowdownGame
 {
-    public class Inventory(Dictionary<Resource, int> resourceInventory)
+    public class Inventory(Dictionary<Resource, int> accumulatedInventory)
     {
-        public Dictionary<Resource, int> ResourceInventory { get; set; } = resourceInventory; // Dictionary of resources that is currently in the players inventory
-        public Dictionary<Resource, int> AccumulatedResources { get; set; } = []; // Dictionary of resources that the player has collected while fighting enemies or scavenging
+        public Dictionary<Resource, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
+        public Dictionary<Resource, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
         public int Coins { get; set; } = 20;
 
         public Inventory() : this([]) { } // If no resource dict is provided, give it an empty dict
