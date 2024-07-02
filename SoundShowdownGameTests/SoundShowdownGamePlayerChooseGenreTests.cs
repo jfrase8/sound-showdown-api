@@ -14,10 +14,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseGenre_InvalidState()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Action)
+                .Build();
 
             try
             {
@@ -33,7 +34,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseGenre_InvalidPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             try
             {
@@ -48,7 +53,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseGenre_WrongPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             try
             {
@@ -63,7 +72,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseGenre_Success()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
@@ -76,8 +89,8 @@ namespace SoundShowdownGameTests
 
             Assert.AreEqual("sad83908230", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Genre, game.CurrentGameState);
-            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
-            Assert.AreEqual("sad83908230", game.PlayerList[0].Id);
+            Assert.AreEqual(GenreName.Pop, game.PlayerList?.Find(player => player.Id == "1hsdfosdn2")?.Genre);
+            Assert.AreEqual("sad83908230", game.PlayerList?[0].Id);
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[0].EventType);
@@ -90,7 +103,12 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseGenre_SuccessLastPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            // Set up a game where the first player has already chosen a Genre
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
@@ -99,17 +117,16 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
             game.PlayerChooseGenre("sad83908230", GenreName.Rock);
 
             Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().Id);
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
-            Assert.AreEqual(GenreName.Pop, game.PlayerList.Find(player => player.Id == "1hsdfosdn2").Genre);
+            Assert.AreEqual(GenreName.Pop, game.PlayerList?.Find(player => player.Id == "1hsdfosdn2")?.Genre);
 
-            Assert.AreEqual(2, events.Count);
-            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[1].EventType);
-            Assert.IsTrue(events[1] is GenreChosenEvent);
-            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[1];
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[0].EventType);
+            Assert.IsTrue(events[0] is GenreChosenEvent);
+            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[0];
             Assert.AreEqual("sad83908230", genreChosenEvent.Player.Id);
             Assert.AreEqual(GenreName.Rock, genreChosenEvent.Genre);
         }        

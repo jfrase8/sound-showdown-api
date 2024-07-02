@@ -14,9 +14,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void FightEnemies_InvalidState()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             try
             {
@@ -32,10 +34,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void FightEnemies_InvalidPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").WithGenre(GenreName.Rock).Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Action)
+                .Build();
 
             try
             {
@@ -51,10 +54,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void FightEnemies_WrongPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").WithGenre(GenreName.Rock).Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Action)
+                .Build();
 
             try
             {
@@ -70,7 +74,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void FightEnemies_Success()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").WithGenre(GenreName.Rock).Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Action)
+                .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
@@ -79,20 +87,14 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
-
-            Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
-
             game.PlayerChooseAction("1hsdfosdn2", Action.Fight_Enemies);
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
 
-            // Test Events
-            Assert.AreEqual(3, events.Count);
-            Assert.AreEqual(SoundShowdownEventType.ActionChosen, events[2].EventType);
-            Assert.IsTrue(events[2] is ActionChosenEvent);
-            ActionChosenEvent actionChosenEvent = (ActionChosenEvent)events[2];
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.ActionChosen, events[0].EventType);
+            Assert.IsTrue(events[0] is ActionChosenEvent);
+            ActionChosenEvent actionChosenEvent = (ActionChosenEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", actionChosenEvent.Player.Id);
             Assert.AreEqual(Action.Fight_Enemies, actionChosenEvent.ChoseAction);
         }

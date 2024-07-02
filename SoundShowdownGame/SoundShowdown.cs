@@ -19,14 +19,24 @@ namespace SoundShowdownGame
         private Enemy? CurrentEnemy { get; set; }
 
         // Events
-        public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent; 
+        public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent;
 
-        public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck) 
+        public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck)
         {
             PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
             //EventListeners = [];
+        }
+
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, int actionsCount, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
+        {
+            PlayerList = players;
+            EnemyDeck = enemyDeck;
+            ActionsCount = actionsCount;
+            CurrentGameState = currentGameState;
+            EnemiesDefeated = enemiesDefeated;
+            CurrentEnemy = currentEnemy;
         }
 
         public void PlayerChooseGenre(string playerId, GenreName genreName)
