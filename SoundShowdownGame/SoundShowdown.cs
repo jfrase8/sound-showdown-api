@@ -13,7 +13,7 @@ namespace SoundShowdownGame
     {
         public List<Player> PlayerList { get; private set; } // List of players in the game
         private int ActionsCount { get; set; } = 3; // Current amount of actions left
-        private Deck<Enemy> EnemyDeck { get; set; } // Deck of enemies
+        public Deck<Enemy> EnemyDeck { get; private set; } // Deck of enemies
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
@@ -132,8 +132,7 @@ namespace SoundShowdownGame
                 _ => throw new SoundShowdownException("Invalid value for BattleResult.")
             };
 
-            // NEEDS IMPLEMENTATION
-            //SoundShowdown?.Invoke(this, new AttackEvent(player, attackInfo))
+            SoundShowdownEvent?.Invoke(this, new AttackEvent(player, attackInfo));
         }
 
         // Called if the player decides to not fight any more enemies
@@ -150,7 +149,7 @@ namespace SoundShowdownGame
             player.Inventory.GainResources();
 
             // NEEDS IMPLEMENTATION
-            //SoundShowdown?.Invoke(this, new EndFightEvent(player))
+            //SoundShowdownEvent?.Invoke(this, new EndFightEvent(player))
         }
 
         private void OnEndOfTurn()
