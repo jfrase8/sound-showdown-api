@@ -12,7 +12,7 @@ namespace SoundShowdownGame
         public string Id { get; init; } // Unique player id
         public GenreName? Genre { get; set; } // Chosen class (Genre) of the player
         public int Health { get; set; } = DefaultHealth; // Total current health points
-        public List<Instrument> Instruments { get; set; } = []; // List of instruments that the player owns
+        public Instrument? Instrument { get; set; } // List of instruments that the player owns
         public Inventory Inventory { get; set; } = new();
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
         public bool IsDefeated // True if the player runs out of health
@@ -28,12 +28,12 @@ namespace SoundShowdownGame
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, List<Instrument> instruments, Inventory inventory, Enemy? enemy)
+        public Player(string id, GenreName? genre, int health, Instrument instrument, Inventory inventory, Enemy? enemy)
         {
             Id = id;
             Genre = genre;
             Health = health;
-            Instruments = instruments;
+            Instrument = instrument;
             Inventory = inventory;
             Enemy = enemy;
         }
