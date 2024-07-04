@@ -17,7 +17,7 @@ namespace SoundShowdownGame
         public void CalcDamage(Enemy enemy, Player player)
         {
             if (player.Instrument == null) throw new SoundShowdownException("Player has no instrument. Cannot calculate damage.");
-            // Components that factor into damage: Roll, upgrade effects, enemy weakness/resistance
+            // Components that factor into damage: roll, upgrade effects, enemy weakness/resistance, genre bonus
 
             // Weakness
             if (player.Instrument.Type == enemy.Weakness) Damage += 2;
@@ -32,12 +32,16 @@ namespace SoundShowdownGame
                 // Check for upgrades that effect roll
                 Roll += player.Instrument.GetRollIncreaseFromUpgrades();
                 if (Roll > 6) Roll = 6; // make sure roll does not go over 6
-
-                // TODO : Add more checks because of special effects
             }
 
             // Roll
             Damage = RollToDamage(player.Instrument.Level);
+
+            // Genre Bonus
+            foreach (GenreName genre in player.Instrument.GenreBonuses)
+            {
+                if (genre == player.Genre) Damage++; break;
+            }
         }
 
         public int RollToDamage(int level)

@@ -14,7 +14,9 @@ namespace SoundShowdownGame
         public int Health { get; set; } = DefaultHealth; // Total current health points
         public Instrument? Instrument { get; set; } // List of instruments that the player owns
         public Inventory Inventory { get; set; } = new();
+        public List<Upgrade> BodyUpgrades = [];
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
+
         public bool IsDefeated // True if the player runs out of health
         {
             get
@@ -65,6 +67,13 @@ namespace SoundShowdownGame
                 default:
                     throw new SoundShowdownException($"Opponent is of type {opponent.GetType()}. Must be of type Enemy or Musician");
             }
+        }
+
+        public void AddUpgrade(Upgrade upgrade)
+        {
+            // Build the upgrade then add it to the player body
+            Inventory.BuildUpgrade(upgrade);
+            BodyUpgrades.Add(upgrade);
         }
     }
 }

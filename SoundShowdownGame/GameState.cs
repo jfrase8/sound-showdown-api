@@ -12,5 +12,7 @@ namespace SoundShowdownGame
         Awaiting_Player_Choose_Action,
         Awaiting_Player_Attack,
         Awaiting_Player_Fight_Or_End_Action,
+        Awaiting_Player_Choose_Upgrade,
+
     }
 }

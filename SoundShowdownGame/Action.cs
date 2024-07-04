@@ -13,6 +13,6 @@ namespace SoundShowdownGame
         Train,
         Shop,
         Scavenge,
-        Upgrade_Instruments
+        Build_Upgrades
     }
 }

@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace SoundShowdownGame
 {
@@ -79,22 +81,45 @@ namespace SoundShowdownGame
                     // Throw event
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                    //case Action.ChallengeMusician:
-                    //    ChallengeMusician();
-                    //    break;
-                    //case Action.Train:
-                    //    Train();
-                    //    break;
-                    //case Action.Shop:
-                    //    Shop();
-                    //    break;
-                    //case Action.Scavenge:
-                    //    Scavenge();
-                    //    break;
-                    //case Action.UpgradeInstruments:
-                    //    UpgradeInstruments();
-                    //    break;
+                case Action.Build_Upgrades:
+                    BuildUpgrades(player);
+                    break;
+                //case Action.ChallengeMusician:
+                //    ChallengeMusician();
+                //    break;
+                //case Action.Train:
+                //    Train();
+                //    break;
+                //case Action.Shop:
+                //    Shop();
+                //    break;
+                //case Action.Scavenge:
+                //    Scavenge();
+                //    break;
             }
+        }
+
+        public void PlayerChooseUpgrade(Upgrade upgrade, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);
+            
+            player.Inventory.ValidateInventory(InventoryType.Resource, upgrade); // Validates the player has the necessary resources
+
+            // Check what type of upgrade is being built
+            if (upgrade.Type == UpgradeType.Body)
+            {
+                player.AddUpgrade(upgrade);
+            }
+            else
+            {
+                // Add the upgrade to the player's instrument
+                if (player.Instrument == null) throw new SoundShowdownException("Player cannot build an instrument upgrade because they do not have an instrument.");
+                player.Instrument.AddUpgrade(upgrade, player);
+            }
+
+            // TODO : Invoke event that shows everyone player built an upgrade
         }
 
         public void Attack(string playerId)
@@ -142,14 +167,15 @@ namespace SoundShowdownGame
             Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Fight_Or_End_Action);
 
-            // Update the game state
-            CurrentGameState = GameState.Awaiting_Player_Choose_Action;
-
             // Player adds accumulated resources to inventory
             player.Inventory.GainResources();
 
-            // NEEDS IMPLEMENTATION
-            //SoundShowdownEvent?.Invoke(this, new EndFightEvent(player))
+            CheckActionsCount();
+        }
+        private void BuildUpgrades(Player player)
+        {
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, Action.Build_Upgrades));
         }
 
         private void OnEndOfTurn()
@@ -169,6 +195,12 @@ namespace SoundShowdownGame
         private void StartNewTurn()
         {
             ActionsCount = 3;
+        }
+
+        private void CheckActionsCount()
+        {
+            if (ActionsCount == 0) OnEndOfTurn();
+            else CurrentGameState = GameState.Awaiting_Player_Choose_Action;
         }
 
         private Player ValidatePlayer(string playerId)

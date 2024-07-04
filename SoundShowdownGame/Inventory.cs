@@ -43,5 +43,51 @@ namespace SoundShowdownGame
             ResourceInventory = AccumulatedResources.ToDictionary(entry => entry.Key, entry => entry.Value);
             AccumulatedResources = [];
         }
+
+        // Checks whether the player checks all boxes on cost of an item
+        public void ValidateInventory<T>(InventoryType type, T itemWithCost)
+        {
+            if (itemWithCost == null) throw new SoundShowdownException("Item is null");
+
+            if (type == InventoryType.Resource)
+            {
+                if (itemWithCost is Upgrade upgrade)
+                {
+                    ValidateUpgradeCost(upgrade);
+                }
+                else throw new SoundShowdownException($"Item being built is of an unknown type:{itemWithCost.GetType()}");
+            }
+            else if (type == InventoryType.Coin)
+            {
+                if (itemWithCost is Instrument instrument)
+                {
+                    if (Coins < instrument.Cost) throw new SoundShowdownException("Player does not have enough money to buy this instrument.");
+                }
+                else throw new SoundShowdownException($"Item being bought is of an unknown type:{itemWithCost.GetType()}");
+            }
+        }
+
+        // Checks if the player has the required resources to build an upgrade
+        public void ValidateUpgradeCost(Upgrade upgrade)
+        {
+            foreach (Resource key in upgrade.BuildCost.Keys)
+            {
+                if (ResourceInventory.TryGetValue(key, out int amount))
+                {
+                    if (amount < upgrade.BuildCost[key]) throw new SoundShowdownException($"Player does not have all the resources to build this upgrade. Needs {upgrade.BuildCost[key] - amount} more {key}.");
+                }
+                else throw new SoundShowdownException($"Player does not have all the resources to build this upgrade. Missing {key}");
+            }
+        }
+
+        // Removes needed resources to build an upgrade from player inventory
+        public void BuildUpgrade(Upgrade upgrade)
+        {
+            foreach (Resource key in upgrade.BuildCost.Keys)
+            {
+                ResourceInventory[key] -= upgrade.BuildCost[key];
+                if (ResourceInventory[key] == 0) ResourceInventory.Remove(key);
+            }
+        }
     }
 }
