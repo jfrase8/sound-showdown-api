@@ -13,7 +13,7 @@ namespace SoundShowdownGame
         private string Id;
         private GenreName? Genre;
         private int Health;
-        private List<Instrument> Instruments;
+        private Instrument? Instrument;
         private Dictionary<Resource, int> InventoryResources;
         private Dictionary<Resource, int> InventoryAccumulatedResources;
         private int InventoryCoins;
@@ -25,7 +25,7 @@ namespace SoundShowdownGame
             Id = $"Player_{IdCounter++}";
             Genre = null;
             Health = 10;
-            Instruments = new List<Instrument>();
+            Instrument = null;
             InventoryResources = new Dictionary<Resource, int>();
             InventoryAccumulatedResources = new Dictionary<Resource, int>();
             InventoryCoins = 0;
@@ -40,7 +40,7 @@ namespace SoundShowdownGame
             inventory.AccumulatedResources = InventoryAccumulatedResources;
             inventory.Coins = InventoryCoins;
 
-            Player player = new Player(id: Id, genre: Genre, health: Health, instruments: Instruments, inventory: inventory, enemy: Enemy);
+            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy);
             return player;
         }
 
@@ -64,7 +64,7 @@ namespace SoundShowdownGame
 
         public PlayerBuilder WithInstrument(Instrument instrument)
         {
-            Instruments.Add(instrument);
+            Instrument = instrument;
             return this;
         }
 

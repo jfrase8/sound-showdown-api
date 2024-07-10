@@ -30,7 +30,7 @@ namespace SoundShowdownGame
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, Instrument instrument, Inventory inventory, Enemy? enemy)
+        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy)
         {
             Id = id;
             Genre = genre;
