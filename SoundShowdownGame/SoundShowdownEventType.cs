@@ -4,6 +4,8 @@
     {
         GenreChosen,
         ActionChosen,
-        Attack
+        Attack,
+        UpgradeBuilt,
+        UpgradeSpaceFull,
     }
 }

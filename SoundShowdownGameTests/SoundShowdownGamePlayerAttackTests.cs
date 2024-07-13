@@ -158,5 +158,47 @@ namespace SoundShowdownGameTests
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
         }
+
+        [TestMethod]
+        public void Attack_SuccessDrain()
+        {
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+
+            List<SoundShowdownEventArgs> events = [];
+
+            game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
+            {
+                events.Add(args);
+            };
+
+            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
+            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+
+            Player player = game.GetTurnPlayer();
+
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+
+            // Give player drain attack
+            player.Instrument.
+
+            game.Attack("1hsdfosdn2");
+
+
+        }
+        [TestMethod]
+        public void Attack_SuccessShock()
+        {
+
+        }
+        [TestMethod]
+        public void Attack_SuccessSleep()
+        {
+
+        }
+        [TestMethod]
+        public void Attack_SuccessPoison()
+        {
+
+        }
     }
 }

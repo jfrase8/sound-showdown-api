@@ -14,6 +14,8 @@ namespace SoundShowdownGame
         public List<GenreName> GenreBonuses {  get; set; } = genreBonuses; // Genres that will benefit when using this instrument
         public List<Upgrade> Upgrades { get; set; } = upgrades;
         public int Level { get; set; } = 1;
+        public List<StatusEffect> StatusEffects { get; set; } = [];
+        public List<Upgrade> Techniques { get; set; } = [];
 
         public int GetDamageFromUpgrades()
         {
@@ -32,13 +34,6 @@ namespace SoundShowdownGame
                 rollIncrease += upgrade.RollIncrease;
             }
             return rollIncrease;
-        }
-
-        // Adds upgrade onto instrument
-        public void AddUpgrade(Upgrade upgrade, Player player)
-        {
-            player.Inventory.BuildUpgrade(upgrade);
-            Upgrades.Add(upgrade);
         }
     }
 }

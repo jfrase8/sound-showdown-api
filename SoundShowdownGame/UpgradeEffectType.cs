@@ -5,6 +5,10 @@
         Damage,
         Health,
         Unique,
-        Roll
+        Roll,
+        Status,
+        Multiple_Attack,
+        Exp_Increase,
+        Sell_Value,
     }
 }

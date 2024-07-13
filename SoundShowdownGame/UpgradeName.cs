@@ -2,8 +2,33 @@
 {
     public enum UpgradeName
     {
-        Gloves,
         Exo_Suit,
         Auto_Tuner,
+        Soul_Resonator,
+        Metronome,
+        Tuner,
+        Poison_Powder,
+        Leather_Gloves,
+        Hazmat_Suit,
+        Rubber_Shoes,
+        Camoflauged_Cloak,
+        Heart_Defibrillator,
+        Wifi_Router,
+        Slime_String,
+        Filtration_System,
+        Echo_Chamber,
+        Crystal_Casing,
+        Staccato,
+        Marcato,
+        Tenudo,
+        Fermata,
+        Trill,
+        Jet_Thrusters,
+        Conductive_Metal,
+        Prerecorded_Instruments,
+        Reverberating_Body,
+        Glow_In_The_Dark_Pipes,
+        Perma_Talk,
+        Modular_Carrying_Case
     }
 }

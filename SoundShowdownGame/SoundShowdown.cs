@@ -82,7 +82,8 @@ namespace SoundShowdownGame
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
                 case Action.Build_Upgrades:
-                    BuildUpgrades(player);
+                    CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
                 //case Action.ChallengeMusician:
                 //    ChallengeMusician();
@@ -103,23 +104,25 @@ namespace SoundShowdownGame
         {
             // Validations
             Player player = ValidatePlayer(playerId);
-            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);
-            
+            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);     
             player.Inventory.ValidateInventory(InventoryType.Resource, upgrade); // Validates the player has the necessary resources
+            if (upgrade.Type != UpgradeType.Suit && upgrade.Type != UpgradeType.Accessory) // If the player is trying to build an instrument upgrade, validate the player has an instrument
+            {
+                if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument and cannot get an instrument upgrade.");
+            }
 
-            // Check what type of upgrade is being built
-            if (upgrade.Type == UpgradeType.Body)
+            bool hasSpace = player.ValidateUpgradeSpace(upgrade, this); // Validates the player has space for the upgrade
+            if (hasSpace)
             {
                 player.AddUpgrade(upgrade);
+                CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+                SoundShowdownEvent?.Invoke(this, new UpgradeBuiltEvent(player, upgrade));
             }
             else
             {
-                // Add the upgrade to the player's instrument
-                if (player.Instrument == null) throw new SoundShowdownException("Player cannot build an instrument upgrade because they do not have an instrument.");
-                player.Instrument.AddUpgrade(upgrade, player);
+                CurrentGameState = GameState.Awaiting_Player_Choose_To_Replace_Upgrade;
+                SoundShowdownEvent?.Invoke(this, new UpgradeSpaceFullEvent(player, upgrade));
             }
-
-            // TODO : Invoke event that shows everyone player built an upgrade
         }
 
         public void Attack(string playerId)
@@ -171,11 +174,6 @@ namespace SoundShowdownGame
             player.Inventory.GainResources();
 
             CheckActionsCount();
-        }
-        private void BuildUpgrades(Player player)
-        {
-            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
-            SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, Action.Build_Upgrades));
         }
 
         private void OnEndOfTurn()

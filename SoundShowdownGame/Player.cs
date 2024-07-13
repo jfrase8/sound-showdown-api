@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata;
+﻿using System.Numerics;
+using System;
+using System.Reflection.Metadata;
 using System.Resources;
 
 namespace SoundShowdownGame
@@ -14,7 +16,8 @@ namespace SoundShowdownGame
         public int Health { get; set; } = DefaultHealth; // Total current health points
         public Instrument? Instrument { get; set; } // List of instruments that the player owns
         public Inventory Inventory { get; set; } = new();
-        public List<Upgrade> BodyUpgrades = [];
+        public List<Upgrade> Accessories = [];
+        public Upgrade? SuitUpgrade { get; set; }
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
 
         public bool IsDefeated // True if the player runs out of health
@@ -69,11 +72,42 @@ namespace SoundShowdownGame
             }
         }
 
+        // Makes sure player has enough space to add a new upgrade
+        public bool ValidateUpgradeSpace(Upgrade upgrade, SoundShowdown game)
+        {
+            switch (upgrade.Type)
+            {
+                case UpgradeType.Suit:
+                    if (SuitUpgrade != null) return false; 
+                    break;
+                case UpgradeType.Accessory:
+                    if (Accessories.Count == 2) return false; 
+                    break;
+                case UpgradeType.Instrument_General:
+                case UpgradeType.Instrument_Unique:
+                case UpgradeType.Instrument_Type:
+                    if (Instrument?.Upgrades.Count == 2) return false; 
+                    break;
+            }
+            return true;
+        }
+
         public void AddUpgrade(Upgrade upgrade)
         {
-            // Build the upgrade then add it to the player body
+            // Build the upgrade then add it to player's body or instrument
             Inventory.BuildUpgrade(upgrade);
-            BodyUpgrades.Add(upgrade);
+
+            switch (upgrade.Type)
+            {
+                case UpgradeType.Suit:
+                    SuitUpgrade = upgrade;  break;
+                case UpgradeType.Accessory:
+                    Accessories.Add(upgrade); break;
+                case UpgradeType.Instrument_General:
+                case UpgradeType.Instrument_Unique:
+                case UpgradeType.Instrument_Type:
+                    Instrument?.Upgrades.Add(upgrade); break;
+            }
         }
     }
 }
