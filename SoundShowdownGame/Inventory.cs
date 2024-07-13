@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SoundShowdownGame
 {
-    public class Inventory(Dictionary<Resource, int> accumulatedInventory)
+    public partial class Inventory(Dictionary<Resource, int> accumulatedInventory)
     {
         public Dictionary<Resource, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
         public Dictionary<Resource, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
@@ -24,16 +26,16 @@ namespace SoundShowdownGame
             foreach (var kvp in dict)
             {
                 // If player already has at least 1 of this resource, add to that resource
-                if (copy.AccumulatedResources.ContainsKey(kvp.Key))
-                {
-                    copy.AccumulatedResources[kvp.Key] += kvp.Value;
-                }
-                // Otherwise, create a new entry with that resource and the amount that player is gaining
-                else
-                {
-                    copy.AccumulatedResources[kvp.Key] = kvp.Value;
-                }
+                copy.AccumulatedResources[kvp.Key] = copy.AccumulatedResources.GetValueOrDefault(kvp.Key, kvp.Value) + kvp.Value;
             }
+            return copy;
+        }
+
+        // Adds a single resource to inventory
+        public static Inventory operator +(Inventory inventory, Resource resource)
+        {
+            Inventory copy = new(inventory.ResourceInventory);
+            copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 1) + 1;
             return copy;
         }
 

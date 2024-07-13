@@ -14,7 +14,6 @@ namespace SoundShowdownGame
     public class SoundShowdown
     {
         public List<Player> PlayerList { get; private set; } // List of players in the game
-        private int ActionsCount { get; set; } = 3; // Current amount of actions left
         public Deck<Enemy> EnemyDeck { get; private set; } // Deck of enemies
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
@@ -28,14 +27,12 @@ namespace SoundShowdownGame
             PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
-            //EventListeners = [];
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, int actionsCount, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
-            ActionsCount = actionsCount;
             CurrentGameState = currentGameState;
             EnemiesDefeated = enemiesDefeated;
             CurrentEnemy = currentEnemy;
@@ -69,9 +66,6 @@ namespace SoundShowdownGame
             // Validate player and game state
             Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Choose_Action);
-
-            // Use up one action
-            ActionsCount--;
 
             switch (action)
             {
@@ -111,18 +105,53 @@ namespace SoundShowdownGame
                 if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument and cannot get an instrument upgrade.");
             }
 
-            bool hasSpace = player.ValidateUpgradeSpace(upgrade, this); // Validates the player has space for the upgrade
+            bool hasSpace = player.CheckUpgradeSpace(upgrade, this); // Checks if the player has space for the upgrade
             if (hasSpace)
             {
                 player.AddUpgrade(upgrade);
-                CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
                 SoundShowdownEvent?.Invoke(this, new UpgradeBuiltEvent(player, upgrade));
             }
             else
             {
-                CurrentGameState = GameState.Awaiting_Player_Choose_To_Replace_Upgrade;
-                SoundShowdownEvent?.Invoke(this, new UpgradeSpaceFullEvent(player, upgrade));
+                CurrentGameState = GameState.Awaiting_Player_Replace_Upgrade;
+                SoundShowdownEvent?.Invoke(this, new ChooseUpgradeToReplaceEvent(player, upgrade));
             }
+        }
+
+        public void PlayerReplaceUpgrade(Upgrade newUpgrade, Upgrade replacedUpgrade, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+            player.ValidatePlayerHasUpgrade(replacedUpgrade);
+
+            player.ReplaceUpgrade(newUpgrade, replacedUpgrade);
+
+            // Player can now choose a resource to get back from the replaced upgrade
+            CurrentGameState = GameState.Awaiting_Player_Choose_Scrap_Resource;
+            SoundShowdownEvent?.Invoke(this, new UpgradeReplacedEvent(player, newUpgrade, replacedUpgrade));
+        }
+
+        public void PlayerChoseScrapResource(Resource resource, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Scrap_Resource);
+
+            player.Inventory += resource;
+
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new ScrapResourceChosenEvent(player, resource));
+        }
+
+        public void PlayerCancelledReplaceUpgrade(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new BackToChooseUpgradeEvent(player));
         }
 
         public void Attack(string playerId)
@@ -173,7 +202,7 @@ namespace SoundShowdownGame
             // Player adds accumulated resources to inventory
             player.Inventory.GainResources();
 
-            CheckActionsCount();
+            OnEndOfTurn();
         }
 
         private void OnEndOfTurn()
@@ -192,13 +221,7 @@ namespace SoundShowdownGame
 
         private void StartNewTurn()
         {
-            ActionsCount = 3;
-        }
-
-        private void CheckActionsCount()
-        {
-            if (ActionsCount == 0) OnEndOfTurn();
-            else CurrentGameState = GameState.Awaiting_Player_Choose_Action;
+            // TODO : Switch turn to new player
         }
 
         private Player ValidatePlayer(string playerId)

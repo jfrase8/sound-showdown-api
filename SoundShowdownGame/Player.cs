@@ -2,6 +2,7 @@
 using System;
 using System.Reflection.Metadata;
 using System.Resources;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundShowdownGame
 {
@@ -72,8 +73,8 @@ namespace SoundShowdownGame
             }
         }
 
-        // Makes sure player has enough space to add a new upgrade
-        public bool ValidateUpgradeSpace(Upgrade upgrade, SoundShowdown game)
+        // Checks if player has enough space to add a new upgrade
+        public bool CheckUpgradeSpace(Upgrade upgrade, SoundShowdown game)
         {
             switch (upgrade.Type)
             {
@@ -107,6 +108,55 @@ namespace SoundShowdownGame
                 case UpgradeType.Instrument_Unique:
                 case UpgradeType.Instrument_Type:
                     Instrument?.Upgrades.Add(upgrade); break;
+            }
+        }
+
+        public void ValidatePlayerHasUpgrade(Upgrade replacedUpgrade)
+        {
+            foreach (var upgrade in Accessories)
+            {
+                if (replacedUpgrade.Name == upgrade.Name) return;
+            }
+            if (SuitUpgrade?.Name == replacedUpgrade.Name) return;
+            
+            foreach (var upgrade in Instrument.Upgrades)
+            {
+                if (upgrade.Name == replacedUpgrade.Name) return;
+            }
+            throw new SoundShowdownException("Player does not have the upgrade that is getting replaced.");
+        }
+
+        public void ReplaceUpgrade(Upgrade newUpgrade, Upgrade replacedUpgrade)
+        {
+            // Validate upgrades are the same type, then replace
+            switch (newUpgrade.Type)
+            {
+                case UpgradeType.Suit:
+                    if (replacedUpgrade.Type == UpgradeType.Suit)
+                    {
+                        AddUpgrade(newUpgrade);
+                    }
+                    else throw new SoundShowdownException($"Upgrades do not go in the same slot: New Upgrade Type: {newUpgrade.Type}, Old Upgrade Type: {replacedUpgrade.Type}");
+                    break;
+                case UpgradeType.Accessory:
+                    if (replacedUpgrade.Type == UpgradeType.Accessory)
+                    {
+                        Accessories.Remove(replacedUpgrade);
+                        AddUpgrade(newUpgrade);
+                    }
+                    else throw new SoundShowdownException($"Upgrades do not go in the same slot: New Upgrade Type: {newUpgrade.Type}, Old Upgrade Type: {replacedUpgrade.Type}");
+                    break;
+                case UpgradeType.Instrument_General:
+                case UpgradeType.Instrument_Unique:
+                case UpgradeType.Instrument_Type:
+                    if (replacedUpgrade.Type == UpgradeType.Instrument_Unique || replacedUpgrade.Type == UpgradeType.Instrument_Type ||
+                        replacedUpgrade.Type == UpgradeType.Instrument_General)
+                    {
+                        Instrument.Upgrades.Remove(replacedUpgrade);
+                        AddUpgrade(newUpgrade);
+                    }
+                    else throw new SoundShowdownException($"Upgrades do not go in the same slot: New Upgrade Type: {newUpgrade.Type}, Old Upgrade Type: {replacedUpgrade.Type}");
+                    break;
             }
         }
     }

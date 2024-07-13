@@ -6,6 +6,9 @@
         ActionChosen,
         Attack,
         UpgradeBuilt,
-        UpgradeSpaceFull,
+        ChooseUpgradeToReplace,
+        UpgradeReplaced,
+        ScrapResourceChosen,
+        BackToChooseUpgrade,
     }
 }
