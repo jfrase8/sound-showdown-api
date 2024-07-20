@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace SoundShowdownGameTests
 {
     [TestClass]
-    public class SoundShowdownGamePlayerChooseActionFightEnemies
+    public class SoundShowdownGamePlayerChooseActionBuildUpgrades
     {
         [TestMethod]
-        public void FightEnemies_InvalidState()
+        public void BuildUpgrades_InvalidState()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
@@ -21,8 +21,8 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
-                Assert.Fail("PlayerChooseAcion should have thrown exception.");
+                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Build_Upgrades);
+                Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
@@ -31,7 +31,7 @@ namespace SoundShowdownGameTests
         }
 
         [TestMethod]
-        public void FightEnemies_InvalidPlayer()
+        public void BuildUpgrades_InvalidPlayer()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
@@ -41,8 +41,8 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.Fight_Enemies);
-                Assert.Fail("PlayerChooseAcion should have thrown exception.");
+                game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.Build_Upgrades);
+                Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
@@ -51,7 +51,7 @@ namespace SoundShowdownGameTests
         }
 
         [TestMethod]
-        public void FightEnemies_WrongPlayer()
+        public void BuildUpgrades_WrongPlayer()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
@@ -61,8 +61,8 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.Fight_Enemies);
-                Assert.Fail("PlayerChooseAcion should have thrown exception.");
+                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.Build_Upgrades);
+                Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
@@ -71,7 +71,7 @@ namespace SoundShowdownGameTests
         }
 
         [TestMethod]
-        public void FightEnemies_Success()
+        public void BuildUpgrades_Success()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Pop).Build())
@@ -86,16 +86,16 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Build_Upgrades);
 
-            Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
+            Assert.AreEqual(GameState.Awaiting_Player_Choose_Upgrade, game.CurrentGameState);
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(SoundShowdownEventType.ActionChosen, events[0].EventType);
             Assert.IsTrue(events[0] is ActionChosenEvent);
             ActionChosenEvent actionChosenEvent = (ActionChosenEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", actionChosenEvent.Player.Id);
-            Assert.AreEqual(SoundShowdownGame.Action.Fight_Enemies, actionChosenEvent.ChoseAction);
+            Assert.AreEqual(SoundShowdownGame.Action.Build_Upgrades, actionChosenEvent.ChoseAction);
         }
     }
 }

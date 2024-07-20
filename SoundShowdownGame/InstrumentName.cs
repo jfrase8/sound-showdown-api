@@ -14,6 +14,7 @@
         Violin,
         Electric_Guitar,
         Auto_Tune,
-        Bass_Guitar
+        Bass_Guitar,
+        Guitar,
     }
 }

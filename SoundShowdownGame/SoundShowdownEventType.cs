@@ -10,5 +10,6 @@
         UpgradeReplaced,
         ScrapResourceChosen,
         BackToChooseUpgrade,
+        FixedInstrument,
     }
 }

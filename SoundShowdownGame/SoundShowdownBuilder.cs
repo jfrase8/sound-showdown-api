@@ -51,7 +51,6 @@ namespace SoundShowdownGame
             Players.Add(player);
             return this;
         }
-
         public SoundShowdownBuilder WithEnemyDeck(Deck<Enemy> enemyDeck)
         {
             EnemyDeck = enemyDeck;

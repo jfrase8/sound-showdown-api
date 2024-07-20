@@ -34,7 +34,7 @@ namespace SoundShowdownGame
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy)
+        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories)
         {
             Id = id;
             Genre = genre;
@@ -42,6 +42,8 @@ namespace SoundShowdownGame
             Instrument = instrument;
             Inventory = inventory;
             Enemy = enemy;
+            SuitUpgrade = suitUpgrade;
+            Accessories = accessories;
         }
 
         public void TakeDamage<T>(int damage, T opponent)

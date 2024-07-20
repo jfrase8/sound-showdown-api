@@ -11,45 +11,45 @@ namespace SoundShowdownGame
         public static Deck<Enemy> CreateShuffledDeck()
         {
             // Mutant Loot
-            Dictionary<Resource, int> mutantLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> mutantLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Leather", 3), 2 },
-                { new Resource("Vial of Poison", 5), 1 }
+                { ResourceName.Leather, 2 },
+                { ResourceName.Vial_Of_Poison, 1 }
             };
             // Raider Loot
-            Dictionary<Resource, int> raiderLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> raiderLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Leather", 3), 2 },
-                { new Resource("Adhesives", 3), 2 }
+                { ResourceName.Leather, 2 },
+                { ResourceName.Adhesive, 2 }
             };
             // Toxic Sludge Loot
-            Dictionary<Resource, int> toxicSludgeLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> toxicSludgeLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Slime", 5), 3 }
+                { ResourceName.Slime, 3 }
             };
             // Sand Worm Loot
-            Dictionary<Resource, int> sandWormLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> sandWormLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Adhesives", 3), 3 }
+                { ResourceName.Adhesive, 3 }
             };
             // Venomfang Loot
-            Dictionary<Resource, int> venomfangLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> venomfangLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Fur", 5), 3 },
-                { new Resource("Vial of Poison", 5), 1 }
+                { ResourceName.Fur, 3 },
+                { ResourceName.Vial_Of_Poison, 1 }
             };
             // Automaton Loot
-            Dictionary<Resource, int> automatonLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> automatonLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Metal Scrap", 5), 2 },
-                { new Resource("Wire", 5), 1 },
-                { new Resource("Batteries", 7), 1 }
+                { ResourceName.Metal_Scrap, 2 },
+                { ResourceName.Wire, 1 },
+                { ResourceName.Batteries, 1 }
             };
             // Cultist Loot
-            Dictionary<Resource, int> cultistLoot = new Dictionary<Resource, int>
+            Dictionary<ResourceName, int> cultistLoot = new Dictionary<ResourceName, int>
             {
-                { new Resource("Leather", 3), 1 },
-                { new Resource("Bone", 5), 2 },
+                { ResourceName.Leather, 1 },
+                { ResourceName.Bone, 2 },
             };
 
             // Create deck

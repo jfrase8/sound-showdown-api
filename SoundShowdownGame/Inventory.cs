@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace SoundShowdownGame
 {
-    public partial class Inventory(Dictionary<Resource, int> accumulatedInventory)
+    public class Inventory(Dictionary<ResourceName, int> accumulatedInventory)
     {
-        public Dictionary<Resource, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
-        public Dictionary<Resource, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
+        public Dictionary<ResourceName, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
+        public Dictionary<ResourceName, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
         public int Coins { get; set; } = 20;
 
         public Inventory() : this([]) { } // If no resource dict is provided, give it an empty dict
 
 
         // Adds Resource dictionary to Resource Dictionary in Inventory - Created for fun (should be a method)
-        public static Inventory operator +(Inventory inventory, Dictionary<Resource, int> dict)
+        public static Inventory operator +(Inventory inventory, Dictionary<ResourceName, int> dict)
         {
             Inventory copy = new(inventory.ResourceInventory);
 
@@ -32,7 +32,7 @@ namespace SoundShowdownGame
         }
 
         // Adds a single resource to inventory
-        public static Inventory operator +(Inventory inventory, Resource resource)
+        public static Inventory operator +(Inventory inventory, ResourceName resource)
         {
             Inventory copy = new(inventory.ResourceInventory);
             copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 1) + 1;
@@ -57,6 +57,10 @@ namespace SoundShowdownGame
                 {
                     ValidateUpgradeCost(upgrade);
                 }
+                else if (itemWithCost is InstrumentType instrumentType)
+                {
+                    if (!ValidateFixCost(instrumentType)) throw new SoundShowdownException($"Player does not have the resources to fix an instrument of {instrumentType} type.");
+                }
                 else throw new SoundShowdownException($"Item being built is of an unknown type:{itemWithCost.GetType()}");
             }
             else if (type == InventoryType.Coin)
@@ -70,9 +74,9 @@ namespace SoundShowdownGame
         }
 
         // Checks if the player has the required resources to build an upgrade
-        public void ValidateUpgradeCost(Upgrade upgrade)
+        private void ValidateUpgradeCost(Upgrade upgrade)
         {
-            foreach (Resource key in upgrade.BuildCost.Keys)
+            foreach (ResourceName key in upgrade.BuildCost.Keys)
             {
                 if (ResourceInventory.TryGetValue(key, out int amount))
                 {
@@ -82,13 +86,67 @@ namespace SoundShowdownGame
             }
         }
 
+        private bool ValidateFixCost(InstrumentType type)
+        {
+            ResourceName resourceToCheck = type switch
+            {
+                InstrumentType.Brass => ResourceName.Tin_Can,
+                InstrumentType.Electronic => ResourceName.Wire,
+                InstrumentType.Vocal => ResourceName.Wire,
+                InstrumentType.Wind => ResourceName.Glass,
+                InstrumentType.Percussion => ResourceName.Plastic,
+                InstrumentType.String => ResourceName.String,
+                _ => throw new SoundShowdownException($"Instrument type: {type}, is not a valid type.")
+            };
+            bool hasAdhesive = false;
+            foreach (KeyValuePair<ResourceName, int> kvp in ResourceInventory)
+            {
+                if (kvp.Key == resourceToCheck)
+                {
+                    if (kvp.Value < 2) return false;
+                }
+                if (kvp.Key == ResourceName.Adhesive)
+                {
+                    hasAdhesive = true;
+                }
+            }
+            if (!hasAdhesive) return false;
+            else return true;
+        }
+
         // Removes needed resources to build an upgrade from player inventory
         public void BuildUpgrade(Upgrade upgrade)
         {
-            foreach (Resource key in upgrade.BuildCost.Keys)
+            foreach (ResourceName key in upgrade.BuildCost.Keys)
             {
                 ResourceInventory[key] -= upgrade.BuildCost[key];
                 if (ResourceInventory[key] == 0) ResourceInventory.Remove(key);
+            }
+        }
+
+        public void FixInstrument(InstrumentType type)
+        {
+            ResourceName resourceToUse = type switch
+            {
+                InstrumentType.Brass => ResourceName.Tin_Can,
+                InstrumentType.Electronic => ResourceName.Wire,
+                InstrumentType.Vocal => ResourceName.Wire,
+                InstrumentType.Wind => ResourceName.Glass,
+                InstrumentType.Percussion => ResourceName.Plastic,
+                InstrumentType.String => ResourceName.String,
+                _ => throw new SoundShowdownException($"Instrument type: {type}, is not a valid type.")
+            };
+
+            foreach (KeyValuePair<ResourceName, int> kvp in ResourceInventory)
+            {
+                if (kvp.Key == resourceToUse)
+                {
+                    ResourceInventory[kvp.Key] -= 2;
+                }
+                if (kvp.Key == ResourceName.Adhesive)
+                {
+                    ResourceInventory[kvp.Key]--;
+                }
             }
         }
     }

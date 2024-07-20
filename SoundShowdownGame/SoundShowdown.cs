@@ -104,6 +104,11 @@ namespace SoundShowdownGame
             {
                 if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument and cannot get an instrument upgrade.");
             }
+            if (upgrade.Type ==  UpgradeType.Instrument_Type) // If the upgrade is instrument specific, check the player has the correct instrument type 
+            {
+                if (player.Instrument.Type != upgrade.InstrumentType) 
+                    throw new SoundShowdownException($"Upgrade Instrument Type does not match player instrument type: Upgrade - {upgrade.InstrumentType}, Player - {player.Instrument.Type}");
+            }
 
             bool hasSpace = player.CheckUpgradeSpace(upgrade, this); // Checks if the player has space for the upgrade
             if (hasSpace)
@@ -132,7 +137,17 @@ namespace SoundShowdownGame
             SoundShowdownEvent?.Invoke(this, new UpgradeReplacedEvent(player, newUpgrade, replacedUpgrade));
         }
 
-        public void PlayerChoseScrapResource(Resource resource, string playerId)
+        public void PlayerCancelledReplaceUpgrade(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new BackToChooseUpgradeEvent(player));
+        }
+
+        public void PlayerChoseScrapResource(ResourceName resource, string playerId)
         {
             // Validations
             Player player = ValidatePlayer(playerId);
@@ -144,14 +159,19 @@ namespace SoundShowdownGame
             SoundShowdownEvent?.Invoke(this, new ScrapResourceChosenEvent(player, resource));
         }
 
-        public void PlayerCancelledReplaceUpgrade(string playerId)
+        public void PlayerFixInstrument(InstrumentType type, string playerId)
         {
             // Validations
             Player player = ValidatePlayer(playerId);
-            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);
+            player.Inventory.ValidateInventory(InventoryType.Resource, type); // Validates the player has the necessary resources
+            if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument.");
+            if (player.Instrument.DamageCounters < 1) throw new SoundShowdownException("Player cannot fix an instrument that isnt damaged.");
 
-            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
-            SoundShowdownEvent?.Invoke(this, new BackToChooseUpgradeEvent(player));
+            player.Inventory.FixInstrument(type);
+            player.Instrument.DamageCounters--;
+
+            SoundShowdownEvent?.Invoke(this, new FixedInstrumentEvent(player, type));
         }
 
         public void Attack(string playerId)

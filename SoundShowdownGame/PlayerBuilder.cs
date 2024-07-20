@@ -14,8 +14,10 @@ namespace SoundShowdownGame
         private GenreName? Genre;
         private int Health;
         private Instrument? Instrument;
-        private Dictionary<Resource, int> InventoryResources;
-        private Dictionary<Resource, int> InventoryAccumulatedResources;
+        private Upgrade? SuitUpgrade;
+        private List<Upgrade> Accessories;
+        private Dictionary<ResourceName, int> InventoryResources;
+        private Dictionary<ResourceName, int> InventoryAccumulatedResources;
         private int InventoryCoins;
         private Enemy? Enemy;
 
@@ -26,8 +28,10 @@ namespace SoundShowdownGame
             Genre = null;
             Health = 10;
             Instrument = null;
-            InventoryResources = new Dictionary<Resource, int>();
-            InventoryAccumulatedResources = new Dictionary<Resource, int>();
+            SuitUpgrade = null;
+            Accessories = [];
+            InventoryResources = [];
+            InventoryAccumulatedResources = [];
             InventoryCoins = 0;
             Enemy = null;
         }
@@ -40,7 +44,7 @@ namespace SoundShowdownGame
             inventory.AccumulatedResources = InventoryAccumulatedResources;
             inventory.Coins = InventoryCoins;
 
-            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy);
+            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy, suitUpgrade: SuitUpgrade, accessories: Accessories);
             return player;
         }
 
@@ -68,13 +72,13 @@ namespace SoundShowdownGame
             return this;
         }
 
-        public PlayerBuilder WithInventoryResource(Resource resource, int amount)
+        public PlayerBuilder WithInventoryResource(ResourceName resource, int amount)
         {
             InventoryResources[resource] = amount;
             return this;
         }
 
-        public PlayerBuilder WithInventoryAccumulatedResource(Resource resource, int amount)
+        public PlayerBuilder WithInventoryAccumulatedResource(ResourceName resource, int amount)
         {
             InventoryAccumulatedResources[resource] = amount;
             return this;
@@ -92,5 +96,16 @@ namespace SoundShowdownGame
             return this;
         }
 
+        public PlayerBuilder WithSuitUpgrade(Upgrade suitUpgrade)
+        {
+            SuitUpgrade = suitUpgrade;
+            return this;
+        }
+
+        public PlayerBuilder WithAccessory(Upgrade accessory)
+        {
+            Accessories.Add(accessory);
+            return this;
+        }
     }
 }

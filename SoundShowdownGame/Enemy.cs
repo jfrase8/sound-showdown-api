@@ -1,13 +1,13 @@
 ﻿namespace SoundShowdownGame
 {
-    public class Enemy(string name, string description, int health, int damage, Dictionary<Resource, int> loot, InstrumentType weakness, InstrumentType resistance, StatusEffect statEffect)
+    public class Enemy(string name, string description, int health, int damage, Dictionary<ResourceName, int> loot, InstrumentType weakness, InstrumentType resistance, StatusEffect statEffect)
     {
         public string Name { get; set; } = name; // Name of the enemy
         public string Description { get; set; } = description; // Description of the enemy
         public int DefaultHealth { get; set; } = health; // Starting health of the enemy
         public int Health { get; set; } = health; // Total current health 
         public int Damage { get; set; } = damage; // Damage that the enemy deals on hit
-        public Dictionary<Resource, int> Loot { get; set; } = loot; // resources that the enemy drops
+        public Dictionary<ResourceName, int> Loot { get; set; } = loot; // resources that the enemy drops
         public Player? AttackingPlayer { get; set; } // The player that is fighting this enemy
         public bool IsDefeated { get; set; } = false; // True if the enemy runs out of health
         public InstrumentType Weakness { get; set; } = weakness;

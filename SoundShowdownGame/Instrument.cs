@@ -16,6 +16,7 @@ namespace SoundShowdownGame
         public int Level { get; set; } = 1;
         public List<StatusEffect> StatusEffects { get; set; } = [];
         public List<Upgrade> Techniques { get; set; } = [];
+        public int DamageCounters { get; set; } = 0;
 
         public int GetDamageFromUpgrades()
         {
