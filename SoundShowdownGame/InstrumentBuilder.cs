@@ -39,7 +39,7 @@ namespace SoundShowdownGame
 
         public Instrument Build()
         {
-            Instrument instrument = new Instrument(name: Name, type: Type, description: Description, damage: Damage, cost: Cost, sellValue: SellValue, quality: Quality, genreBonuses: GenreBonuses, upgrades: Upgrades);
+            Instrument instrument = new Instrument(name: Name, type: Type, description: Description, damage: Damage, cost: Cost, sellValue: SellValue, quality: Quality, genreBonuses: GenreBonuses, upgrades: Upgrades, level: Level, statusEffects: StatusEffects, techniques: Techniques, damageCounters: DamageCounters);
             return instrument;
         }
 

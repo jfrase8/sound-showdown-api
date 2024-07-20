@@ -35,7 +35,7 @@ namespace SoundShowdownGame
         public static Inventory operator +(Inventory inventory, ResourceName resource)
         {
             Inventory copy = new(inventory.ResourceInventory);
-            copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 1) + 1;
+            copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 1);
             return copy;
         }
 
@@ -142,10 +142,12 @@ namespace SoundShowdownGame
                 if (kvp.Key == resourceToUse)
                 {
                     ResourceInventory[kvp.Key] -= 2;
+                    if (ResourceInventory[kvp.Key] == 0) ResourceInventory.Remove(kvp.Key);
                 }
                 if (kvp.Key == ResourceName.Adhesive)
                 {
                     ResourceInventory[kvp.Key]--;
+                    if (ResourceInventory[kvp.Key] == 0) ResourceInventory.Remove(kvp.Key);
                 }
             }
         }

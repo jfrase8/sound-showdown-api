@@ -2,21 +2,51 @@
 
 namespace SoundShowdownGame
 {
-    public partial class Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades)
+    public class Instrument
     {
-        public InstrumentName Name { get; set; } = name;
-        public InstrumentType Type { get; set; } = type; // Type of instrument
-        public string Description { get; set; } = description;
-        public int Damage { get; set; } = damage; // Base damage that an instrument starts with
-        public int Cost { get; set; } = cost; // Amount of coins needed to buy this instruments
-        public Quality Quality { get; set; } = quality;
-        public int SellValue { get; set; } = sellValue; // How many coins this instrument sells for
-        public List<GenreName> GenreBonuses {  get; set; } = genreBonuses; // Genres that will benefit when using this instrument
-        public List<Upgrade> Upgrades { get; set; } = upgrades;
+        public InstrumentName Name { get; set; }
+        public InstrumentType Type { get; set; } // Type of instrument
+        public string Description { get; set; }
+        public int Damage { get; set; } // Base damage that an instrument starts with
+        public int Cost { get; set; } // Amount of coins needed to buy this instruments
+        public Quality Quality { get; set; }
+        public int SellValue { get; set; } // How many coins this instrument sells for
+        public List<GenreName> GenreBonuses {  get; set; } // Genres that will benefit when using this instrument
+        public List<Upgrade> Upgrades { get; set; }
         public int Level { get; set; } = 1;
         public List<StatusEffect> StatusEffects { get; set; } = [];
         public List<Upgrade> Techniques { get; set; } = [];
         public int DamageCounters { get; set; } = 0;
+
+        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades)
+        {
+            Name = name;
+            Type = type;
+            Description = description;
+            Damage = damage;
+            Cost = cost;
+            SellValue = sellValue;
+            Quality = quality;
+            GenreBonuses = genreBonuses;
+            Upgrades = upgrades;
+        }
+
+        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades, int level, List<StatusEffect> statusEffects, List<Upgrade> techniques, int damageCounters)
+        {
+            Name = name;
+            Type = type;
+            Description = description;
+            Damage = damage;
+            Cost = cost;
+            SellValue = sellValue;
+            Quality = quality;
+            GenreBonuses = genreBonuses;
+            Upgrades = upgrades;
+            Level = level;
+            StatusEffects = statusEffects;
+            Techniques = techniques;
+            DamageCounters = damageCounters;
+        }
 
         public int GetDamageFromUpgrades()
         {

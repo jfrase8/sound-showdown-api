@@ -65,7 +65,7 @@ namespace SoundShowdownGameTests
             try
             {
                 game.PlayerReplaceUpgrade(testNewUpgrade, testReplacedUpgrade, "5384043508");
-                Assert.Fail("PlayerChooseUpgrade should have thrown exception.");
+                Assert.Fail("PlayerReplaceUpgrade should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
@@ -96,7 +96,7 @@ namespace SoundShowdownGameTests
             try
             {
                 game.PlayerReplaceUpgrade(testNewUpgrade, testReplacedUpgrade, "sad83908230");
-                Assert.Fail("PlayerChooseUpgrade should have thrown exception.");
+                Assert.Fail("PlayerReplacedUpgrade should have thrown exception.");
             }
             catch (SoundShowdownException)
             {

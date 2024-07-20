@@ -251,7 +251,7 @@ namespace SoundShowdownGameTests
 
             game.PlayerChooseUpgrade(testUpgrade, "1hsdfosdn2");
 
-            Assert.AreEqual(game.PlayerList[0].Inventory.ResourceInventory.Count, 0);
+            Assert.AreEqual(0, game.PlayerList[0].Inventory.ResourceInventory.Count);
 
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Upgrade, game.CurrentGameState);
 
@@ -306,7 +306,7 @@ namespace SoundShowdownGameTests
 
             game.PlayerChooseUpgrade(testNewUpgrade, "1hsdfosdn2");
 
-            Assert.AreNotEqual(game.PlayerList[0].Inventory.ResourceInventory.Count, 0);
+            Assert.AreNotEqual(0, game.PlayerList[0].Inventory.ResourceInventory.Count);
 
             Assert.AreEqual(GameState.Awaiting_Player_Replace_Upgrade, game.CurrentGameState);
 
