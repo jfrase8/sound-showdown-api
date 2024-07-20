@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace SoundShowdownGame
 {
-    public enum Action
+    public enum Quality
     {
-        Fight_Enemies,
-        Challenge_Musician,
-        Train,
-        Shop,
-        Scavenge,
-        Build_Upgrades
+        Exotic,
+        High,
+        Good,
+        Low
     }
 }

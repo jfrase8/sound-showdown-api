@@ -4,15 +4,16 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace SoundShowdownGame
 {
     public class SoundShowdown
     {
         public List<Player> PlayerList { get; private set; } // List of players in the game
-        private int ActionsCount { get; set; } = 3; // Current amount of actions left
         public Deck<Enemy> EnemyDeck { get; private set; } // Deck of enemies
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
@@ -26,14 +27,12 @@ namespace SoundShowdownGame
             PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
-            //EventListeners = [];
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, int actionsCount, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
-            ActionsCount = actionsCount;
             CurrentGameState = currentGameState;
             EnemiesDefeated = enemiesDefeated;
             CurrentEnemy = currentEnemy;
@@ -68,9 +67,6 @@ namespace SoundShowdownGame
             Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Choose_Action);
 
-            // Use up one action
-            ActionsCount--;
-
             switch (action)
             {
                 case Action.Fight_Enemies:
@@ -79,22 +75,103 @@ namespace SoundShowdownGame
                     // Throw event
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                    //case Action.ChallengeMusician:
-                    //    ChallengeMusician();
-                    //    break;
-                    //case Action.Train:
-                    //    Train();
-                    //    break;
-                    //case Action.Shop:
-                    //    Shop();
-                    //    break;
-                    //case Action.Scavenge:
-                    //    Scavenge();
-                    //    break;
-                    //case Action.UpgradeInstruments:
-                    //    UpgradeInstruments();
-                    //    break;
+                case Action.Build_Upgrades:
+                    CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
+                    break;
+                //case Action.ChallengeMusician:
+                //    ChallengeMusician();
+                //    break;
+                //case Action.Train:
+                //    Train();
+                //    break;
+                //case Action.Shop:
+                //    Shop();
+                //    break;
+                //case Action.Scavenge:
+                //    Scavenge();
+                //    break;
             }
+        }
+
+        public void PlayerChooseUpgrade(Upgrade upgrade, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);     
+            player.Inventory.ValidateInventory(InventoryType.Resource, upgrade); // Validates the player has the necessary resources
+            if (upgrade.Type != UpgradeType.Suit && upgrade.Type != UpgradeType.Accessory) // If the player is trying to build an instrument upgrade, validate the player has an instrument
+            {
+                if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument and cannot get an instrument upgrade.");
+            }
+            if (upgrade.Type ==  UpgradeType.Instrument_Type) // If the upgrade is instrument specific, check the player has the correct instrument type 
+            {
+                if (player.Instrument.Type != upgrade.InstrumentType) 
+                    throw new SoundShowdownException($"Upgrade Instrument Type does not match player instrument type: Upgrade - {upgrade.InstrumentType}, Player - {player.Instrument.Type}");
+            }
+
+            bool hasSpace = player.CheckUpgradeSpace(upgrade, this); // Checks if the player has space for the upgrade
+            if (hasSpace)
+            {
+                player.AddUpgrade(upgrade);
+                SoundShowdownEvent?.Invoke(this, new UpgradeBuiltEvent(player, upgrade));
+            }
+            else
+            {
+                CurrentGameState = GameState.Awaiting_Player_Replace_Upgrade;
+                SoundShowdownEvent?.Invoke(this, new ChooseUpgradeToReplaceEvent(player, upgrade));
+            }
+        }
+
+        public void PlayerReplaceUpgrade(Upgrade newUpgrade, Upgrade replacedUpgrade, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+            player.ValidatePlayerHasUpgrade(replacedUpgrade);
+
+            player.ReplaceUpgrade(newUpgrade, replacedUpgrade);
+
+            // Player can now choose a resource to get back from the replaced upgrade
+            CurrentGameState = GameState.Awaiting_Player_Choose_Scrap_Resource;
+            SoundShowdownEvent?.Invoke(this, new UpgradeReplacedEvent(player, newUpgrade, replacedUpgrade));
+        }
+
+        public void PlayerCancelledReplaceUpgrade(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Replace_Upgrade);
+
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new BackToChooseUpgradeEvent(player));
+        }
+
+        public void PlayerChoseScrapResource(ResourceName resource, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Scrap_Resource);
+
+            player.Inventory += resource;
+
+            CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
+            SoundShowdownEvent?.Invoke(this, new ScrapResourceChosenEvent(player, resource));
+        }
+
+        public void PlayerFixInstrument(InstrumentType type, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Upgrade);
+            player.Inventory.ValidateInventory(InventoryType.Resource, type); // Validates the player has the necessary resources
+            if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument.");
+            if (player.Instrument.DamageCounters < 1) throw new SoundShowdownException("Player cannot fix an instrument that isnt damaged.");
+
+            player.Inventory.FixInstrument(type);
+            player.Instrument.DamageCounters--;
+
+            SoundShowdownEvent?.Invoke(this, new FixedInstrumentEvent(player, type));
         }
 
         public void Attack(string playerId)
@@ -142,14 +219,10 @@ namespace SoundShowdownGame
             Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Fight_Or_End_Action);
 
-            // Update the game state
-            CurrentGameState = GameState.Awaiting_Player_Choose_Action;
-
             // Player adds accumulated resources to inventory
             player.Inventory.GainResources();
 
-            // NEEDS IMPLEMENTATION
-            //SoundShowdownEvent?.Invoke(this, new EndFightEvent(player))
+            OnEndOfTurn();
         }
 
         private void OnEndOfTurn()
@@ -168,7 +241,7 @@ namespace SoundShowdownGame
 
         private void StartNewTurn()
         {
-            ActionsCount = 3;
+            // TODO : Switch turn to new player
         }
 
         private Player ValidatePlayer(string playerId)

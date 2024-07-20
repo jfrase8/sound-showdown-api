@@ -42,7 +42,7 @@ namespace SoundShowdownGame
                 EnemyDeck = EnemyDeckFactory.CreateShuffledDeck();
             }
 
-            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, actionsCount: ActionsCount, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy);
+            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy);
             return game;
         }
 
@@ -51,7 +51,6 @@ namespace SoundShowdownGame
             Players.Add(player);
             return this;
         }
-
         public SoundShowdownBuilder WithEnemyDeck(Deck<Enemy> enemyDeck)
         {
             EnemyDeck = enemyDeck;

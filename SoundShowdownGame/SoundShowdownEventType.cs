@@ -4,6 +4,12 @@
     {
         GenreChosen,
         ActionChosen,
-        Attack
+        Attack,
+        UpgradeBuilt,
+        ChooseUpgradeToReplace,
+        UpgradeReplaced,
+        ScrapResourceChosen,
+        BackToChooseUpgrade,
+        FixedInstrument,
     }
 }

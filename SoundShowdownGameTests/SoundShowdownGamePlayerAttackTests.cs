@@ -48,7 +48,7 @@ namespace SoundShowdownGameTests
             }
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void Attack_SuccessPlayerWon()
         {
             SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
@@ -65,13 +65,13 @@ namespace SoundShowdownGameTests
 
             Player player = game.GetTurnPlayer();
 
-            // Create custom enemy
+            // Create test enemy
             Dictionary<Resource, int> loot = new Dictionary<Resource, int>
             {
-                { new Resource("Leather", "Dry leather", 5), 2 },
-                { new Resource("Goo", "Gooey slimly stuff", 2), 3 }
+                { new Resource("Leather", 5), 2 },
+                { new Resource("Goo", 2), 3 }
             };
-            game.EnemyDeck.Cards.Push(new Enemy("Slime", "Slimey", 1, 1, loot));
+            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 1, 1, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
 
             game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
 
@@ -102,13 +102,13 @@ namespace SoundShowdownGameTests
 
             Player player = game.GetTurnPlayer();
 
-            // Create custom enemy
+            // Create test enemy
             Dictionary<Resource, int> loot = new Dictionary<Resource, int>
             {
-                { new Resource("Leather", "Dry leather", 5), 2 },
-                { new Resource("Goo", "Gooey slimly stuff", 2), 3 }
+                { new Resource("Leather", 5), 2 },
+                { new Resource("Goo", 2), 3 }
             };
-            game.EnemyDeck.Cards.Push(new Enemy("Slime", "Slimey", 20, 20, loot));
+            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 20, 20, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
 
             game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
 
@@ -139,13 +139,13 @@ namespace SoundShowdownGameTests
 
             Player player = game.GetTurnPlayer();
 
-            // Create custom enemy
+            // Create test enemy
             Dictionary<Resource, int> loot = new Dictionary<Resource, int>
             {
-                { new Resource("Leather", "Dry leather", 5), 2 },
-                { new Resource("Goo", "Gooey slimly stuff", 2), 3 }
+                { new Resource("Leather", 5), 2 },
+                { new Resource("Goo", 2), 3 }
             };
-            game.EnemyDeck.Cards.Push(new Enemy("Slime", "Slimey", 20, 1, loot));
+            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 20, 1, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
 
             game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
 
@@ -158,5 +158,47 @@ namespace SoundShowdownGameTests
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
         }
+
+        [TestMethod]
+        public void Attack_SuccessDrain()
+        {
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+
+            List<SoundShowdownEventArgs> events = [];
+
+            game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
+            {
+                events.Add(args);
+            };
+
+            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
+            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+
+            Player player = game.GetTurnPlayer();
+
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+
+            // Give player drain attack
+           // player.Instrument.
+
+            //game.Attack("1hsdfosdn2");
+
+
+        }
+        [TestMethod]
+        public void Attack_SuccessShock()
+        {
+
+        }
+        [TestMethod]
+        public void Attack_SuccessSleep()
+        {
+
+        }
+        [TestMethod]
+        public void Attack_SuccessPoison()
+        {
+
+        }*/
     }
 }

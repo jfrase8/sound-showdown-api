@@ -1,39 +1,70 @@
-﻿namespace SoundShowdownGame
+﻿using System.Runtime.Serialization.Formatters;
+
+namespace SoundShowdownGame
 {
-    public class Instrument(string name, Instrument.InstrumentType type, string description, int damage, int cost, int sellValue)
+    public class Instrument
     {
-        public enum InstrumentType
+        public InstrumentName Name { get; set; }
+        public InstrumentType Type { get; set; } // Type of instrument
+        public string Description { get; set; }
+        public int Damage { get; set; } // Base damage that an instrument starts with
+        public int Cost { get; set; } // Amount of coins needed to buy this instruments
+        public Quality Quality { get; set; }
+        public int SellValue { get; set; } // How many coins this instrument sells for
+        public List<GenreName> GenreBonuses {  get; set; } // Genres that will benefit when using this instrument
+        public List<Upgrade> Upgrades { get; set; }
+        public int Level { get; set; } = 1;
+        public List<StatusEffect> StatusEffects { get; set; } = [];
+        public List<Upgrade> Techniques { get; set; } = [];
+        public int DamageCounters { get; set; } = 0;
+
+        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades)
         {
-            Brass,
-            Percussion,
-            Vocal,
-            Woodwind,
-            String
+            Name = name;
+            Type = type;
+            Description = description;
+            Damage = damage;
+            Cost = cost;
+            SellValue = sellValue;
+            Quality = quality;
+            GenreBonuses = genreBonuses;
+            Upgrades = upgrades;
         }
-        public enum InstrumentName // Change later to be a database with instrument names
+
+        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades, int level, List<StatusEffect> statusEffects, List<Upgrade> techniques, int damageCounters)
         {
-            Piano,
-            Flute,
-            Mic,
-            Drums,
-            Sampler,
-            Talk_Box,
-            Trumpet,
-            Trombone,
-            Clarinet,
-            Violin,
-            Electric_Guitar,
-            Auto_Tune,
-            Bass_Guitar
+            Name = name;
+            Type = type;
+            Description = description;
+            Damage = damage;
+            Cost = cost;
+            SellValue = sellValue;
+            Quality = quality;
+            GenreBonuses = genreBonuses;
+            Upgrades = upgrades;
+            Level = level;
+            StatusEffects = statusEffects;
+            Techniques = techniques;
+            DamageCounters = damageCounters;
         }
 
-        public string Name { get; set; } = name;
-        public InstrumentType Type { get; set; } = type; // Type of instrument
-        public string Description { get; set; } = description;
-        public int Damage { get; set; } = damage;
-        public int Cost { get; set; } = cost; // Amount of coins needed to buy this instruments
-        public int SellValue { get; set; } = sellValue; // How many coins this instrument sells for
-
-
+        public int GetDamageFromUpgrades()
+        {
+            int extraDamage = 0;
+            foreach (var upgrade in Upgrades)
+            {
+                extraDamage += upgrade.ExtraDamage;
+            }
+            return extraDamage;
+        }
+        public int GetRollIncreaseFromUpgrades()
+        {
+            int rollIncrease = 0;
+            foreach (var upgrade in Upgrades)
+            {
+                rollIncrease += upgrade.RollIncrease;
+            }
+            return rollIncrease;
+        }
     }
 }
