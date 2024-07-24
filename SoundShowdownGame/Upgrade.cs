@@ -11,11 +11,11 @@ namespace SoundShowdownGame
         public int ExtraDamage { get; init; }
         public int RollIncrease { get; init; }
         public int HealthIncrease { get; init; }
-        public Dictionary<ResourceName, int> BuildCost { get; init; }
+        public Dictionary<ResourceName, int>? BuildCost { get; init; }
 
         public InstrumentType? InstrumentType { get; init; }
 
-        public Upgrade(UpgradeName name, UpgradeType type, string description, int extraDamage, int rollIncrease, int healthIncrease, Dictionary<ResourceName, int> buildCost)
+        public Upgrade(UpgradeName name, UpgradeType type, string description, int extraDamage, int rollIncrease, int healthIncrease, Dictionary<ResourceName, int>? buildCost)
         {
             Name = name;
             Type = type;

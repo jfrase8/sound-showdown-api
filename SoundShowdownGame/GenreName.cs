@@ -12,6 +12,8 @@ namespace SoundShowdownGame
         Jazz,
         Hip_Hop,
         Rock,
-        Pop
+        Pop,
+        Country,
+        Folk
     }
 }

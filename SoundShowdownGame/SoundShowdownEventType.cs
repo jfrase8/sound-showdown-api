@@ -11,5 +11,8 @@
         ScrapResourceChosen,
         BackToChooseUpgrade,
         FixedInstrument,
+        RollForTraining,
+        AddedInstrumentExp,
+        TechniqueLearned,
     }
 }

@@ -20,7 +20,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
                 .Build();
 
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -50,7 +50,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Upgrade)
                 .Build();
 
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -80,7 +80,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Upgrade)
                 .Build();
 
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -116,7 +116,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Upgrade)
                 .Build();
 
-            Dictionary<ResourceName, int> testResources = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? testResources = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -153,7 +153,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Upgrade)
                 .Build();
 
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -237,7 +237,7 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
@@ -268,7 +268,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void PlayerChooseUpgrade_SuccessWithoutSpace()
         {
-            Dictionary<ResourceName, int> buildCost = new Dictionary<ResourceName, int>
+            Dictionary<ResourceName, int>? buildCost = new Dictionary<ResourceName, int>
             {
                 { ResourceName.Metal_Scrap, 1 },
                 { ResourceName.Wire, 1 },
