@@ -82,9 +82,10 @@ namespace SoundShowdownGame
                 //case Action.ChallengeMusician:
                 //    ChallengeMusician();
                 //    break;
-                //case Action.Train:
-                //    Train();
-                //    break;
+                case Action.Train:
+                    CurrentGameState = GameState.Awaiting_Player_Roll_For_Training;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
+                    break;
                 //case Action.Shop:
                 //    Shop();
                 //    break;
@@ -92,6 +93,63 @@ namespace SoundShowdownGame
                 //    Scavenge();
                 //    break;
             }
+        }
+
+        public void PlayerRolledForTraining(int lastRoll, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Roll_For_Training);
+            if (player.Instrument == null) throw new SoundShowdownException("Player does not have an instrument so they cannot train.");
+
+            int roll = Dice.RollDie();
+
+            // If this is not the players first roll
+            if (lastRoll > 0)
+            {
+                // If the players first and second roll add up to more than 8, they get a damage counter on their instrument
+                if (lastRoll + roll > 8 && player.Genre != GenreName.Folk)
+                {
+                    player.Instrument.DamageCounters++;
+                    SoundShowdownEvent?.Invoke(this, new RollForTrainingEvent(player, lastRoll, roll, true));
+                }
+                else SoundShowdownEvent?.Invoke(this, new RollForTrainingEvent(player, lastRoll, roll, false));
+
+            }
+            else SoundShowdownEvent?.Invoke(this, new RollForTrainingEvent(player, roll, 0, false));
+        }
+
+        public void AddExperienceToInstrument(int experience, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            if (player.Instrument == null) throw new SoundShowdownException("Player cannot add experience to their instrument because they don't have one.");
+            if (player.Instrument.Level == 3) throw new SoundShowdownException("Player instrument is already at level 3.");
+
+            bool leveledUp = false;
+
+            player.Instrument.Experience += experience;
+            if (player.Instrument.Experience >= 10)
+            {
+                player.Instrument.Level++;
+                leveledUp = true;
+                if (player.Instrument.Level != 3) player.Instrument.Experience -= 10;
+
+                CurrentGameState = GameState.Awaiting_Player_Choose_Technique;
+            }
+
+            SoundShowdownEvent?.Invoke(this, new AddedInstrumentExpEvent(player, experience, player.Instrument.Level, player.Instrument.Experience, leveledUp));
+        }
+
+        public void PlayerChooseTechnique(Upgrade technique, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Choose_Technique);
+            if (player.Instrument == null) throw new SoundShowdownException("Player cannot choose a technique because they don't have an instrument.");
+
+            player.Instrument.Techniques.Add(technique);
+            SoundShowdownEvent?.Invoke(this, new TechniqueLearnedEvent(player, technique));
         }
 
         public void PlayerChooseUpgrade(Upgrade upgrade, string playerId)

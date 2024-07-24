@@ -18,6 +18,7 @@ namespace SoundShowdownGame
         private List<StatusEffect> StatusEffects;
         private List<Upgrade> Techniques;
         private int DamageCounters;
+        private int Experience;
 
         public InstrumentBuilder()
         {
@@ -35,11 +36,12 @@ namespace SoundShowdownGame
             StatusEffects = [];
             Techniques = [];
             DamageCounters = 0;
+            Experience = 0;
         }
 
         public Instrument Build()
         {
-            Instrument instrument = new Instrument(name: Name, type: Type, description: Description, damage: Damage, cost: Cost, sellValue: SellValue, quality: Quality, genreBonuses: GenreBonuses, upgrades: Upgrades, level: Level, statusEffects: StatusEffects, techniques: Techniques, damageCounters: DamageCounters);
+            Instrument instrument = new Instrument(name: Name, type: Type, description: Description, damage: Damage, cost: Cost, sellValue: SellValue, quality: Quality, genreBonuses: GenreBonuses, upgrades: Upgrades, level: Level, statusEffects: StatusEffects, techniques: Techniques, damageCounters: DamageCounters, experience: Experience);
             return instrument;
         }
 
@@ -114,5 +116,10 @@ namespace SoundShowdownGame
             return this;
         }
 
+        public InstrumentBuilder WithExperience(int experience)
+        {
+            Experience = experience;
+            return this;
+        }
     }
 }

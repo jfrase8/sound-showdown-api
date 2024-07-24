@@ -16,7 +16,8 @@ namespace SoundShowdownGame
         public int Level { get; set; } = 1;
         public List<StatusEffect> StatusEffects { get; set; } = [];
         public List<Upgrade> Techniques { get; set; } = [];
-        public int DamageCounters { get; set; } = 0;
+        public int DamageCounters { get; set; }
+        public int Experience { get; set; }
 
         public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades)
         {
@@ -31,7 +32,7 @@ namespace SoundShowdownGame
             Upgrades = upgrades;
         }
 
-        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades, int level, List<StatusEffect> statusEffects, List<Upgrade> techniques, int damageCounters)
+        public Instrument(InstrumentName name, InstrumentType type, string description, int damage, int cost, int sellValue, Quality quality, List<GenreName> genreBonuses, List<Upgrade> upgrades, int level, List<StatusEffect> statusEffects, List<Upgrade> techniques, int damageCounters, int experience)
         {
             Name = name;
             Type = type;
@@ -46,6 +47,7 @@ namespace SoundShowdownGame
             StatusEffects = statusEffects;
             Techniques = techniques;
             DamageCounters = damageCounters;
+            Experience = experience;
         }
 
         public int GetDamageFromUpgrades()
