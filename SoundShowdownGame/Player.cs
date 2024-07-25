@@ -21,13 +21,7 @@ namespace SoundShowdownGame
         public Upgrade? SuitUpgrade { get; set; }
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
 
-        public bool IsDefeated // True if the player runs out of health
-        {
-            get
-            {
-                return Health <= 0;
-            }
-        } 
+        public bool IsDefeated => Health <= 0; // True if the player runs out of health
 
         public Player(string id)
         {
@@ -126,6 +120,25 @@ namespace SoundShowdownGame
                 if (upgrade.Name == replacedUpgrade.Name) return;
             }
             throw new SoundShowdownException("Player does not have the upgrade that is getting replaced.");
+        }
+
+        // Validates the player can afford this instrument
+        public void ValidateInstrumentCost(Instrument instrument)
+        {
+            int tradeInValue = 0;
+            // Check if the player has an instrument
+            if (Instrument != null)
+            {
+                // Get number of upgrades on instrument
+                int upgradeCount = Instrument.Upgrades.Count;
+
+                tradeInValue = Instrument.Cost / 2 + (upgradeCount*5); // Instruments are traded in for half price plus 5 coins per upgrade
+            }
+
+            int leftOverAmount = instrument.Cost - tradeInValue; // Amount of player's own coins that they must spend
+
+            // Check if player has enough coins
+            if (Inventory.Coins < leftOverAmount) throw new SoundShowdownException("Player does not have enough coins to buy this instrument.");
         }
 
         public void ReplaceUpgrade(Upgrade newUpgrade, Upgrade replacedUpgrade)

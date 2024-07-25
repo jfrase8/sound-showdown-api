@@ -16,5 +16,8 @@
         Auto_Tune,
         Bass_Guitar,
         Guitar,
+        Erhu,
+        Cymbal,
+
     }
 }

@@ -10,7 +10,7 @@ namespace SoundShowdownGame
     public class Deck<T>
     {
         public string Name { get; private set; }
-        public int Size { get { return Cards.Count; } }
+        public int Size => Cards.Count;
         public string Description { get; private set; }
         public Stack<T> Cards { get; set; }
 

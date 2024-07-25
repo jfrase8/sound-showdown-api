@@ -17,5 +17,6 @@ namespace SoundShowdownGame
         Awaiting_Player_Choose_Scrap_Resource,
         Awaiting_Player_Roll_For_Training,
         Awaiting_Player_Choose_Technique,
+        Awaiting_Player_Shop
     }
 }

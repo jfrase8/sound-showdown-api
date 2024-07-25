@@ -13,6 +13,7 @@ namespace SoundShowdownGame
         public Dictionary<ResourceName, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
         public Dictionary<ResourceName, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
         public int Coins { get; set; } = 20;
+        public Dictionary<ItemName, int> Items { get; set; } = [];
 
         public Inventory() : this([]) { } // If no resource dict is provided, give it an empty dict
 
