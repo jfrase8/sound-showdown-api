@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Numerics;
@@ -103,6 +104,31 @@ namespace SoundShowdownGame
                 //    Scavenge();
                 //    break;
             }
+        }
+
+        public void BuyItem(Item item, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Shop);
+            if (player.Inventory.Coins < item.Price) // Validate player has enough coins
+                throw new SoundShowdownException("Player does not have enough coins to buy an item");
+
+            if (player.Inventory.GetItemCount() == 5) // Validate player has inventory space
+                throw new SoundShowdownException("Player does not have any more inventory space for items.");
+
+            // Buy the item
+            player.Inventory.Coins -= item.Price;
+
+            // Gain the item
+            if (player.Inventory.Items.TryGetValue(item.Name, out int value))
+            {
+                player.Inventory.Items[item.Name] = value + 1;
+            }
+            else player.Inventory.Items[item.Name] = 1;
+
+            // Send event
+            SoundShowdownEvent?.Invoke(this, new PlayerBoughtItemEvent(player, item));
         }
 
         public void BuyInstrument(Instrument instrument, string playerId)

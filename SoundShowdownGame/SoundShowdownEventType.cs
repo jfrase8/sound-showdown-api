@@ -15,5 +15,6 @@
         AddedInstrumentExp,
         TechniqueLearned,
         PlayerBoughtInstrument,
+        PlayerBoughtItem,
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -151,6 +152,11 @@ namespace SoundShowdownGame
                     if (ResourceInventory[kvp.Key] == 0) ResourceInventory.Remove(kvp.Key);
                 }
             }
+        }
+
+        public int GetItemCount()
+        {
+            return Items.Sum(kvp => kvp.Value);
         }
     }
 }
