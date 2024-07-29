@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization.Formatters;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters;
 
 namespace SoundShowdownGame
 {
@@ -67,6 +68,12 @@ namespace SoundShowdownGame
                 rollIncrease += upgrade.RollIncrease;
             }
             return rollIncrease;
+        }
+
+        // Creates a resale version of an instrument
+        public Instrument CreateResale()
+        {
+            return new Instrument(Name, Type, Description, Damage, Cost-10, SellValue, Quality, GenreBonuses, []);
         }
     }
 }

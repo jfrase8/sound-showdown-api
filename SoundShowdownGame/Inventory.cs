@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace SoundShowdownGame
     public class Inventory(Dictionary<ResourceName, int> accumulatedInventory)
     {
         public Dictionary<ResourceName, int> ResourceInventory { get; set; } = []; // Dictionary of resources that is currently in the players inventory
-        public Dictionary<ResourceName, int> AccumulatedResources { get; set; } = accumulatedInventory; // Dictionary of resources that the player has collected while fighting enemies or scavenging
+        public Dictionary<ResourceName, int> AccumulatedResources { get; set; } = new Dictionary<ResourceName, int>(accumulatedInventory); // Dictionary of resources that the player has collected while fighting enemies or scavenging
         public int Coins { get; set; } = 20;
+        public Dictionary<ItemName, int> Items { get; set; } = [];
 
         public Inventory() : this([]) { } // If no resource dict is provided, give it an empty dict
-
 
         // Adds Resource dictionary to Resource Dictionary in Inventory - Created for fun (should be a method)
         public static Inventory operator +(Inventory inventory, Dictionary<ResourceName, int> dict)
@@ -26,7 +27,7 @@ namespace SoundShowdownGame
             foreach (var kvp in dict)
             {
                 // If player already has at least 1 of this resource, add to that resource
-                copy.AccumulatedResources[kvp.Key] = copy.AccumulatedResources.GetValueOrDefault(kvp.Key, kvp.Value) + kvp.Value;
+                copy.AccumulatedResources[kvp.Key] = copy.AccumulatedResources.GetValueOrDefault(kvp.Key, 0) + kvp.Value;
             }
             return copy;
         }
@@ -34,8 +35,19 @@ namespace SoundShowdownGame
         // Adds a single resource to inventory
         public static Inventory operator +(Inventory inventory, ResourceName resource)
         {
-            Inventory copy = new(inventory.ResourceInventory);
-            copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 1);
+            Inventory copy = new(new Dictionary<ResourceName, int>(inventory.ResourceInventory));
+            copy.GainResources();
+            copy.ResourceInventory[resource] = copy.ResourceInventory.GetValueOrDefault(resource, 0) + 1;
+            return copy;
+        }
+
+        // Subtract a single resource from inventory
+        public static Inventory operator -(Inventory inventory, ResourceName resource)
+        {
+            Inventory copy = new(new Dictionary<ResourceName, int>(inventory.ResourceInventory));
+            copy.GainResources();
+            copy.ResourceInventory[resource]--;
+            if (copy.ResourceInventory[resource] == 0) copy.ResourceInventory.Remove(resource);
             return copy;
         }
 
@@ -99,7 +111,7 @@ namespace SoundShowdownGame
                 _ => throw new SoundShowdownException($"Instrument type: {type}, is not a valid type.")
             };
             bool hasAdhesive = false;
-            foreach (KeyValuePair<ResourceName, int> kvp in ResourceInventory)
+            foreach (var kvp in ResourceInventory)
             {
                 if (kvp.Key == resourceToCheck)
                 {
@@ -112,6 +124,18 @@ namespace SoundShowdownGame
             }
             if (!hasAdhesive) return false;
             else return true;
+        }
+        public void ValidateHasResources(ResourceName[] fourResources)
+        {
+            var resourceDict = new Dictionary<ResourceName, int>();
+            foreach (ResourceName resource in fourResources) 
+            {
+                resourceDict[resource] = resourceDict.GetValueOrDefault(resource, 0) + 1;
+            }
+            foreach (var kvp in resourceDict)
+            {
+                if (!ResourceInventory.TryGetValue(kvp.Key, out int value) || value != kvp.Value) throw new SoundShowdownException("Player does not have these 4 resources");
+            }
         }
 
         // Removes needed resources to build an upgrade from player inventory
@@ -150,6 +174,11 @@ namespace SoundShowdownGame
                     if (ResourceInventory[kvp.Key] == 0) ResourceInventory.Remove(kvp.Key);
                 }
             }
+        }
+
+        public int GetItemCount()
+        {
+            return Items.Sum(kvp => kvp.Value);
         }
     }
 }

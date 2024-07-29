@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Numerics;
@@ -15,6 +16,7 @@ namespace SoundShowdownGame
     {
         public List<Player> PlayerList { get; private set; } // List of players in the game
         public Deck<Enemy> EnemyDeck { get; private set; } // Deck of enemies
+        public Shop GameShop { get; private set; } // The Shop for the game
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
@@ -27,15 +29,23 @@ namespace SoundShowdownGame
             PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
+            GameShop = new(
+                InstrumentDeckFactory.CreatedShuffledExoticInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledHighInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledGoodInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledLowInstrumentDeck(),
+                [new Item(ItemName.Food, "Heals you", 10), new Item(ItemName.Antidote, "Gets rid of all poison counters", 10)]
+            );
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
             CurrentGameState = currentGameState;
             EnemiesDefeated = enemiesDefeated;
             CurrentEnemy = currentEnemy;
+            GameShop = gameShop;
         }
 
         public void PlayerChooseGenre(string playerId, GenreName genreName)
@@ -86,13 +96,86 @@ namespace SoundShowdownGame
                     CurrentGameState = GameState.Awaiting_Player_Roll_For_Training;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                //case Action.Shop:
-                //    Shop();
-                //    break;
+                case Action.Shop:
+                    CurrentGameState = GameState.Awaiting_Player_Shop;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
+                    break;
                 //case Action.Scavenge:
                 //    Scavenge();
                 //    break;
             }
+        }
+
+        public void TradeWithTrader(ResourceName[] fourResources, ResourceName newResource, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Shop);
+            player.Inventory.ValidateHasResources(fourResources);
+
+            foreach (var resource in fourResources)
+            {
+                player.Inventory -= resource;
+            }
+
+            player.Inventory += newResource;
+
+            SoundShowdownEvent?.Invoke(this, new TradeWithTraderEvent(player, fourResources, newResource));
+        }
+
+        public void BuyItem(Item item, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Shop);
+            if (player.Inventory.Coins < item.Price) // Validate player has enough coins
+                throw new SoundShowdownException("Player does not have enough coins to buy an item");
+
+            if (player.Inventory.GetItemCount() == 5) // Validate player has inventory space
+                throw new SoundShowdownException("Player does not have any more inventory space for items.");
+
+            // Buy the item
+            player.Inventory.Coins -= item.Price;
+
+            // Gain the item
+            if (player.Inventory.Items.TryGetValue(item.Name, out int value))
+            {
+                player.Inventory.Items[item.Name] = value + 1;
+            }
+            else player.Inventory.Items[item.Name] = 1;
+
+            // Send event
+            SoundShowdownEvent?.Invoke(this, new PlayerBoughtItemEvent(player, item));
+        }
+
+        public void BuyInstrument(Instrument instrument, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Shop);
+            player.ValidateInstrumentCost(instrument);
+
+            if (player.Instrument != null) // Do a trade-in
+            {
+                // Sell current instrument
+                player.Inventory.Coins += player.Instrument.Cost / 2 + (player.Instrument.Upgrades.Count * 5);
+
+                // Buy new instrument
+                player.Inventory.Coins -= instrument.Cost;
+
+                // Put players current instrument on resale
+                GameShop.ResaleInstruments.Add(player.Instrument.CreateResale());
+
+                // Replace player's instrument with new one
+                player.Instrument = instrument;
+            }
+            else // Buy new instrument
+            {
+                player.Inventory.Coins -= instrument.Cost;
+                player.Instrument = instrument;
+            }
+
+            SoundShowdownEvent?.Invoke(this, new PlayerBoughtInstrumentEvent(player, instrument, GameShop));
         }
 
         public void PlayerRolledForTraining(int lastRoll, string playerId)

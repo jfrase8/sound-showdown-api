@@ -10,20 +10,20 @@ namespace SoundShowdownGame
     {
         private List<Player> Players;
         private Deck<Enemy>? EnemyDeck;
-        private int ActionsCount;
         private GameState CurrentGameState;
         private int EnemiesDefeated;
         private Enemy? CurrentEnemy;
+        private Shop? GameShop;
 
         public SoundShowdownBuilder() 
         {
             // Create defaults
-            Players = new List<Player>();
+            Players = [];
             EnemyDeck = null;
-            ActionsCount = 3;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
             EnemiesDefeated = 0;
             CurrentEnemy = null;
+            GameShop = null;
         }
 
         public SoundShowdown Build()
@@ -37,12 +37,18 @@ namespace SoundShowdownGame
             // TODO: Finish validation
 
             // Create a deck if one has not been defined
-            if (EnemyDeck == null)
-            {
-                EnemyDeck = EnemyDeckFactory.CreateShuffledDeck();
-            }
+            EnemyDeck ??= EnemyDeckFactory.CreateShuffledDeck();
 
-            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy);
+            // Create a shop if one has not been defined
+            GameShop ??= new Shop(
+                InstrumentDeckFactory.CreatedShuffledExoticInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledHighInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledGoodInstrumentDeck(),
+                InstrumentDeckFactory.CreatedShuffledLowInstrumentDeck(),
+                [new Item(ItemName.Food, "Heals you", 10), new Item(ItemName.Antidote, "Gets rid of all poison counters", 10)]
+            );
+
+            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy, gameShop: GameShop);
             return game;
         }
 
@@ -56,13 +62,6 @@ namespace SoundShowdownGame
             EnemyDeck = enemyDeck;
             return this;
         }
-
-        public SoundShowdownBuilder WithActionsCount(int actionsCount)
-        {
-            ActionsCount = actionsCount;
-            return this;
-        }
-
         public SoundShowdownBuilder WithCurrentGameState(GameState currentGameState)
         {
             CurrentGameState = currentGameState;

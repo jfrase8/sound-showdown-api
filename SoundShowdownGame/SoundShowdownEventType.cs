@@ -14,5 +14,8 @@
         RollForTraining,
         AddedInstrumentExp,
         TechniqueLearned,
+        PlayerBoughtInstrument,
+        PlayerBoughtItem,
+        TradeWithTrader,
     }
 }
