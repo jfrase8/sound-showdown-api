@@ -106,6 +106,23 @@ namespace SoundShowdownGame
             }
         }
 
+        public void TradeWithTrader(ResourceName[] fourResources, ResourceName newResource, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Shop);
+            player.Inventory.ValidateHasResources(fourResources);
+
+            foreach (var resource in fourResources)
+            {
+                player.Inventory -= resource;
+            }
+
+            player.Inventory += newResource;
+
+            SoundShowdownEvent?.Invoke(this, new TradeWithTraderEvent(player, fourResources, newResource));
+        }
+
         public void BuyItem(Item item, string playerId)
         {
             // Validations

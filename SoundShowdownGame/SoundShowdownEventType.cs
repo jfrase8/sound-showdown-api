@@ -16,5 +16,6 @@
         TechniqueLearned,
         PlayerBoughtInstrument,
         PlayerBoughtItem,
+        TradeWithTrader,
     }
 }
