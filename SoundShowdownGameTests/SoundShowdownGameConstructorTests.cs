@@ -8,7 +8,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void TestConstructor()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             Assert.IsNotNull(game);
             Assert.AreEqual("1hsdfosdn2", game.GetTurnPlayer().Id);

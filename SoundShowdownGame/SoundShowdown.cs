@@ -16,18 +16,21 @@ namespace SoundShowdownGame
     {
         public List<Player> PlayerList { get; private set; } // List of players in the game
         public Deck<Enemy> EnemyDeck { get; private set; } // Deck of enemies
+        public Deck<EventCard> EventDeck { get; private set; } // Deck of events
         public Shop GameShop { get; private set; } // The Shop for the game
         public GameState CurrentGameState { get; private set; }
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
+        private EventCard? CurrentEventCard { get; set; }
 
         // Events
         public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent;
 
-        public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck)
+        public SoundShowdown(List<string> playerIds, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck)
         {
             PlayerList = playerIds.Select(playerId => new Player(playerId)).ToList();
             EnemyDeck = enemyDeck;
+            EventDeck = eventDeck;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
             GameShop = new(
                 InstrumentDeckFactory.CreatedShuffledExoticInstrumentDeck(),
@@ -38,10 +41,11 @@ namespace SoundShowdownGame
             );
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
+            EventDeck = eventDeck;
             CurrentGameState = currentGameState;
             EnemiesDefeated = enemiesDefeated;
             CurrentEnemy = currentEnemy;
@@ -100,10 +104,35 @@ namespace SoundShowdownGame
                     CurrentGameState = GameState.Awaiting_Player_Shop;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                //case Action.Scavenge:
-                //    Scavenge();
-                //    break;
+                case Action.Scavenge:
+                    CurrentGameState = GameState.Awaiting_Player_Roll_Scavenge_Dice;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
+                    break;
             }
+        }
+
+        public void RollScavengeDice(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Roll_Scavenge_Dice);
+
+            // Get the 4 dice rolls
+            List<int> rolls = [];
+            for (int i = 0; i < 4; i++) rolls.Add(Dice.RollDie());
+
+            // Draw an event card if the player rolled a 1
+            if (rolls.Contains(1))
+            {
+                CurrentEventCard = EventDeck.Draw();
+            }
+            else // If player didnt roll an event marker, add the resources to their inventory immediately
+            {
+                foreach (int roll in rolls) player.Inventory += GlobalData.ScavengeDiceRolls[roll];
+            }
+
+            // Send results
+            SoundShowdownEvent?.Invoke(this, new RolledScavengeDiceEvent(player, rolls, CurrentEventCard));
         }
 
         public void TradeWithTrader(ResourceName[] fourResources, ResourceName newResource, string playerId)
