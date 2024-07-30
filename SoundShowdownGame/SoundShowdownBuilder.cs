@@ -10,6 +10,7 @@ namespace SoundShowdownGame
     {
         private List<Player> Players;
         private Deck<Enemy>? EnemyDeck;
+        private Deck<EventCard>? EventDeck;
         private GameState CurrentGameState;
         private int EnemiesDefeated;
         private Enemy? CurrentEnemy;
@@ -20,6 +21,7 @@ namespace SoundShowdownGame
             // Create defaults
             Players = [];
             EnemyDeck = null;
+            EventDeck = null;
             CurrentGameState = GameState.Awaiting_Player_Choose_Genre;
             EnemiesDefeated = 0;
             CurrentEnemy = null;
@@ -38,6 +40,7 @@ namespace SoundShowdownGame
 
             // Create a deck if one has not been defined
             EnemyDeck ??= EnemyDeckFactory.CreateShuffledDeck();
+            EventDeck ??= EventDeckFactory.CreateShuffledDeck();
 
             // Create a shop if one has not been defined
             GameShop ??= new Shop(
@@ -48,7 +51,7 @@ namespace SoundShowdownGame
                 [new Item(ItemName.Food, "Heals you", 10), new Item(ItemName.Antidote, "Gets rid of all poison counters", 10)]
             );
 
-            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy, gameShop: GameShop);
+            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, eventDeck: EventDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy, gameShop: GameShop);
             return game;
         }
 

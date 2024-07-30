@@ -14,7 +14,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_InvalidState()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
 
@@ -32,7 +32,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_InvalidPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
             game.PlayerChooseGenre("sad83908230", GenreName.Rock);
@@ -51,7 +51,7 @@ namespace SoundShowdownGameTests
         /*[TestMethod]
         public void Attack_SuccessPlayerWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             List<SoundShowdownEventArgs> events = [];
 
@@ -88,7 +88,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessEnemyWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             List<SoundShowdownEventArgs> events = [];
 
@@ -125,7 +125,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessNeitherWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             List<SoundShowdownEventArgs> events = [];
 
@@ -162,7 +162,7 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessDrain()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck());
+            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
             List<SoundShowdownEventArgs> events = [];
 

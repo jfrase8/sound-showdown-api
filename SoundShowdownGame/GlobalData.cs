@@ -2,7 +2,7 @@
 {
     public static class GlobalData
     {
-        public static Dictionary<ResourceName, int> Resources = new Dictionary<ResourceName, int>
+        public static readonly Dictionary<ResourceName, int> Resources = new()
         {
             { ResourceName.Plastic, 3 },
             { ResourceName.Wire, 3 },
@@ -18,6 +18,15 @@
             { ResourceName.Slime, 5 },
             { ResourceName.Batteries, 7 },
             { ResourceName.Crystal, 10 }
+        };
+
+        public static readonly Dictionary<int, ResourceName> ScavengeDiceRolls = new()
+        {
+            { 2, ResourceName.Glass},
+            { 3, ResourceName.Tin_Can },
+            { 4, ResourceName.String },
+            { 5, ResourceName.Plastic },
+            { 6, ResourceName.Wire },
         };
     }
 }

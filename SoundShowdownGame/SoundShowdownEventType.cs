@@ -17,5 +17,6 @@
         PlayerBoughtInstrument,
         PlayerBoughtItem,
         TradeWithTrader,
+        RolledScavengeDice,
     }
 }
