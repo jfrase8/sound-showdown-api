@@ -18,5 +18,6 @@
         PlayerBoughtItem,
         TradeWithTrader,
         RolledScavengeDice,
+        UsedItem,
     }
 }

@@ -22,6 +22,7 @@ namespace SoundShowdownGame
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
         private EventCard? CurrentEventCard { get; set; }
+        public Musician[] Musicians { get; private set; }
 
         // Events
         public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent;
@@ -39,9 +40,14 @@ namespace SoundShowdownGame
                 InstrumentDeckFactory.CreatedShuffledLowInstrumentDeck(),
                 [new Item(ItemName.Food, "Heals you", 10), new Item(ItemName.Antidote, "Gets rid of all poison counters", 10)]
             );
+            Musicians = 
+            [
+                new Musician(MusicianName.Dirty_Dan, 10, 5, StatusEffect.Poison, GlobalData.MusicianPowers[MusicianName.Dirty_Dan], 1),
+                new Musician(MusicianName.Rex_Rhythm, 20, 10, StatusEffect.Shock, GlobalData.MusicianPowers[MusicianName.Rex_Rhythm], 2),
+            ];
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop, Musician[] musicians)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
@@ -50,6 +56,7 @@ namespace SoundShowdownGame
             EnemiesDefeated = enemiesDefeated;
             CurrentEnemy = currentEnemy;
             GameShop = gameShop;
+            Musicians = musicians;
         }
 
         public void PlayerChooseGenre(string playerId, GenreName genreName)
@@ -84,18 +91,18 @@ namespace SoundShowdownGame
             switch (action)
             {
                 case Action.Fight_Enemies:
-                    // Get the drawn enemy card
+                    CurrentGameState = GameState.Awaiting_Player_Attack;
                     CurrentEnemy = DrawEnemyCard(player);
-                    // Throw event
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
                 case Action.Build_Upgrades:
                     CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                //case Action.ChallengeMusician:
-                //    ChallengeMusician();
-                //    break;
+                case Action.ChallengeMusician:
+                    CurrentGameState = GameState.Awaiting_Player_Attack;
+                    SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
+                    break;
                 case Action.Train:
                     CurrentGameState = GameState.Awaiting_Player_Roll_For_Training;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
@@ -344,7 +351,36 @@ namespace SoundShowdownGame
             SoundShowdownEvent?.Invoke(this, new FixedInstrumentEvent(player, type));
         }
 
-        public void Attack(string playerId)
+        public void UseItem(Item item, string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Attack);
+            if (!player.Inventory.Items.ContainsKey(item.Name)) throw new SoundShowdownException($"Player does not have this item: {item.Name}");
+
+            item.Effect?.Invoke(player); // TODO : Add implementation of item effects
+
+            // Remove the item from inventory
+            player.Inventory.Items[item.Name] -= 1;
+            if (player.Inventory.Items[item.Name] == 0) player.Inventory.Items.Remove(item.Name);
+
+            SoundShowdownEvent?.Invoke(this, new UsedItemEvent(player, item));
+        }
+
+        public void AttackMusician(string playerId)
+        {
+            // Validations
+            Player player = ValidatePlayer(playerId);
+            ValidateGameState(GameState.Awaiting_Player_Attack);
+
+            // Roll the die and calculate the damage dealt
+            AttackInfo attackInfo = new() { Roll = Dice.RollDie() };
+            attackInfo.CalcDamage(Musicians[player.MusicianTrackRank], player);
+
+
+        }
+
+        public void AttackEnemy(string playerId)
         {
             // Validations
             Player player = ValidatePlayer(playerId);
@@ -432,9 +468,6 @@ namespace SoundShowdownGame
 
         private Enemy DrawEnemyCard(Player player)
         {
-            // Set the game state
-            CurrentGameState = GameState.Awaiting_Player_Attack;
-
             // Draw an enemy from the enemies deck
             Enemy enemy = EnemyDeck.Draw();
             enemy.AttackingPlayer = player;

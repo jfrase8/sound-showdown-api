@@ -3,7 +3,7 @@
     public enum UpgradeName
     {
         Exo_Suit,
-        Auto_Tuner,
+        Auto_Tune,
         Soul_Resonator,
         Metronome,
         Tuner,

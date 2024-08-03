@@ -51,25 +51,6 @@ namespace SoundShowdownGame
             Experience = experience;
         }
 
-        public int GetDamageFromUpgrades()
-        {
-            int extraDamage = 0;
-            foreach (var upgrade in Upgrades)
-            {
-                extraDamage += upgrade.ExtraDamage;
-            }
-            return extraDamage;
-        }
-        public int GetRollIncreaseFromUpgrades()
-        {
-            int rollIncrease = 0;
-            foreach (var upgrade in Upgrades)
-            {
-                rollIncrease += upgrade.RollIncrease;
-            }
-            return rollIncrease;
-        }
-
         // Creates a resale version of an instrument
         public Instrument CreateResale()
         {

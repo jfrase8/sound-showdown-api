@@ -28,7 +28,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 },
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, buildCost);
+            Upgrade testUpgrade = new(UpgradeName.Exo_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Multi);
 
             try
             {
@@ -58,7 +58,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, buildCost);
+            Upgrade testUpgrade = new(UpgradeName.Exo_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Multi);
 
             try
             {
@@ -88,7 +88,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, buildCost);
+            Upgrade testUpgrade = new(UpgradeName.Exo_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Multi);
 
             try
             {
@@ -124,7 +124,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, testResources);
+            Upgrade testUpgrade = new(UpgradeName.Exo_Suit, UpgradeType.Suit, "", testResources, null, UpgradeEffectType.Multi);
 
             try
             {
@@ -161,7 +161,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Instrument_General, "", 0, 0, 5, buildCost);
+            Upgrade testUpgrade = new(UpgradeName.Auto_Tune, UpgradeType.Instrument_Type, "", buildCost, InstrumentType.Vocal, UpgradeEffectType.Passive);
 
             try
             {
@@ -199,7 +199,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Auto_Tuner, UpgradeType.Instrument_Type, "", 0, 0, 0, buildCost, InstrumentType.Vocal);
+            Upgrade testUpgrade = new(UpgradeName.Auto_Tune, UpgradeType.Instrument_Type, "", buildCost, InstrumentType.Vocal, UpgradeEffectType.Passive);
 
             try
             {
@@ -245,7 +245,7 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, buildCost);
+            Upgrade testUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Multi);
 
             Assert.IsTrue(game.PlayerList[0].Inventory.ResourceInventory.ContainsKey(ResourceName.Metal_Scrap));
 
@@ -276,8 +276,8 @@ namespace SoundShowdownGameTests
                 { ResourceName.Crystal, 1 },
                 { ResourceName.Plastic, 1 }
             };
-            Upgrade testReplacedUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", 0, 0, 5, buildCost);
-            Upgrade testNewUpgrade = new Upgrade(UpgradeName.Hazmat_Suit, UpgradeType.Suit, "", 0, 0, 0, buildCost);
+            Upgrade testReplacedUpgrade = new Upgrade(UpgradeName.Exo_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Multi);
+            Upgrade testNewUpgrade = new Upgrade(UpgradeName.Hazmat_Suit, UpgradeType.Suit, "", buildCost, null, UpgradeEffectType.Passive);
 
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithGenre(GenreName.Jazz)

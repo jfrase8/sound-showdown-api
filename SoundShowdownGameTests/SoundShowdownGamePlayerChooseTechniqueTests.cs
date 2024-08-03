@@ -20,7 +20,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
                 .Build();
 
-            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", 0, 0, 0, null);
+            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", null, null, UpgradeEffectType.Passive);
 
             try
             {
@@ -42,7 +42,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Technique)
                 .Build();
 
-            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", 0, 0, 0, null);
+            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", null, null, UpgradeEffectType.Passive);
 
             try
             {
@@ -64,7 +64,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Technique)
                 .Build();
 
-            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", 0, 0, 0, null);
+            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", null, null, UpgradeEffectType.Passive);
 
             try
             {
@@ -86,7 +86,7 @@ namespace SoundShowdownGameTests
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Technique)
                 .Build();
 
-            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", 0, 0, 0, null);
+            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", null, null, UpgradeEffectType.Passive);
 
             try
             {
@@ -115,7 +115,7 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", 0, 0, 0, null);
+            Upgrade technique = new Upgrade(UpgradeName.Trill, UpgradeType.Technique, "", null, null, UpgradeEffectType.Passive);
 
             game.PlayerChooseTechnique(technique, "1hsdfosdn2");
 

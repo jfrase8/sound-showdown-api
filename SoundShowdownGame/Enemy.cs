@@ -12,7 +12,7 @@
         public bool IsDefeated { get; set; } = false; // True if the enemy runs out of health
         public InstrumentType Weakness { get; set; } = weakness;
         public InstrumentType Resistance { get; set; } = resistance;
-        public StatusEffect StatEffect { get; set; } = statEffect;
+        public StatusEffect? StatEffect { get; set; } = statEffect;
         public void TakeDamage(int damage)
         {
             Health -= damage;

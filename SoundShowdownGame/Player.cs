@@ -20,8 +20,9 @@ namespace SoundShowdownGame
         public List<Upgrade> Accessories = [];
         public Upgrade? SuitUpgrade { get; set; }
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
-
         public bool IsDefeated => Health <= 0; // True if the player runs out of health
+        public int MusicianTrackRank { get; set; } = 0; // How far up the musician track they have gone
+
 
         public Player(string id)
         {

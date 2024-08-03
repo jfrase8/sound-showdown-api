@@ -12,7 +12,7 @@ namespace SoundShowdownGameTests
     public class SoundShowdownGamePlayerAttackTests
     {
         [TestMethod]
-        public void Attack_InvalidState()
+        public void AttackEnemy_InvalidState()
         {
             SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
@@ -20,7 +20,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.Attack("1hsdfosdn2");
+                game.AttackEnemy("1hsdfosdn2");
                 Assert.Fail("Attack should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -30,7 +30,7 @@ namespace SoundShowdownGameTests
         }
 
         [TestMethod]
-        public void Attack_InvalidPlayer()
+        public void AttackEnemy_InvalidPlayer()
         {
             SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
 
@@ -39,7 +39,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.Attack("5384043508");
+                game.AttackEnemy("5384043508");
                 Assert.Fail("Attack should have thrown exception.");
             }
             catch (SoundShowdownException)
