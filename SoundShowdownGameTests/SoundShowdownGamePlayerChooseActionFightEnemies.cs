@@ -1,4 +1,5 @@
 ﻿using SoundShowdownGame;
+using SoundShowdownGame.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -41,7 +42,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("5384043508", SoundShowdownGame.Action.Fight_Enemies);
+                game.PlayerChooseAction("5384043508", SoundShowdownGame.Enums.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -61,7 +62,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Action.Fight_Enemies);
+                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Enums.Action.Fight_Enemies);
                 Assert.Fail("PlayerChooseAcion should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -86,7 +87,7 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.Action.Fight_Enemies);
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
 
@@ -95,7 +96,7 @@ namespace SoundShowdownGameTests
             Assert.IsTrue(events[0] is ActionChosenEvent);
             ActionChosenEvent actionChosenEvent = (ActionChosenEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", actionChosenEvent.Player.Id);
-            Assert.AreEqual(SoundShowdownGame.Action.Fight_Enemies, actionChosenEvent.ChoseAction);
+            Assert.AreEqual(SoundShowdownGame.Enums.Action.Fight_Enemies, actionChosenEvent.ChoseAction);
         }
     }
 }

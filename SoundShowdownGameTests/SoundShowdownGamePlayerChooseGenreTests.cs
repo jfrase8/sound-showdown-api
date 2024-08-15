@@ -1,4 +1,5 @@
 ﻿using SoundShowdownGame;
+using SoundShowdownGame.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -99,7 +100,7 @@ namespace SoundShowdownGameTests
             Assert.AreEqual("1hsdfosdn2", endTurnEvent.CurrentPlayer.Id);
             Assert.AreEqual("sad83908230", endTurnEvent.NextPlayer.Id);
             Assert.AreEqual(GenreName.Pop, endTurnEvent.CurrentPlayer.Genre);
-            Assert.AreEqual(SoundShowdownGame.Action.ChooseGenre, endTurnEvent.Action);
+            Assert.AreEqual(SoundShowdownGame.Enums.Action.ChooseGenre, endTurnEvent.Action);
         }
 
         [TestMethod]
@@ -132,7 +133,7 @@ namespace SoundShowdownGameTests
             Assert.AreEqual("sad83908230", endTurnEvent.CurrentPlayer.Id);
             Assert.AreEqual("1hsdfosdn2", endTurnEvent.NextPlayer.Id);
             Assert.AreEqual(GenreName.Rock, endTurnEvent.CurrentPlayer.Genre);
-            Assert.AreEqual(SoundShowdownGame.Action.ChooseGenre, endTurnEvent.Action);
+            Assert.AreEqual(SoundShowdownGame.Enums.Action.ChooseGenre, endTurnEvent.Action);
         }        
     }
 }

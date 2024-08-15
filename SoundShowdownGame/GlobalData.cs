@@ -1,4 +1,6 @@
-﻿namespace SoundShowdownGame
+﻿using SoundShowdownGame.Enums;
+
+namespace SoundShowdownGame
 {
     public static class GlobalData
     {

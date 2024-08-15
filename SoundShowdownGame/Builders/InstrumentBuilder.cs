@@ -1,7 +1,7 @@
-﻿using SoundShowdownGame;
+﻿using SoundShowdownGame.Enums;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace SoundShowdownGame
+namespace SoundShowdownGame.Builders
 {
     public class InstrumentBuilder
     {

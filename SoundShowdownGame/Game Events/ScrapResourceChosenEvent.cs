@@ -1,4 +1,6 @@
-﻿namespace SoundShowdownGame
+﻿using SoundShowdownGame.Enums;
+
+namespace SoundShowdownGame
 {
     public class ScrapResourceChosenEvent(Player player, ResourceName resource) : SoundShowdownEventArgs(SoundShowdownEventType.ScrapResourceChosen)
     {

@@ -1,4 +1,4 @@
-﻿namespace SoundShowdownGame
+﻿namespace SoundShowdownGame.Enums
 {
     public enum UpgradeEffectType
     {

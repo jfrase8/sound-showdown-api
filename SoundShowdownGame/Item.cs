@@ -1,4 +1,6 @@
-﻿namespace SoundShowdownGame;
+﻿using SoundShowdownGame.Enums;
+
+namespace SoundShowdownGame;
 
 public delegate void ItemEffect(Player player);
 public class Item(ItemName name, string description, int price)

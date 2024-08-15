@@ -3,10 +3,10 @@ using System;
 using System.Reflection.Metadata;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGame
 {
-
     public class Player
     {
         public const int DefaultHealth = 10; // Starting Health Points
@@ -41,7 +41,7 @@ namespace SoundShowdownGame
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories, int bodyExp)
+        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories, int bodyExp, int musicianTrackRank)
         {
             Id = id;
             Genre = genre;
@@ -52,6 +52,7 @@ namespace SoundShowdownGame
             SuitUpgrade = suitUpgrade;
             Accessories = accessories;
             BodyExp = bodyExp;
+            MusicianTrackRank = musicianTrackRank;
         }
 
         public void GainHealth()
@@ -76,10 +77,10 @@ namespace SoundShowdownGame
             switch (opponent)
             {
                 case Enemy enemy:
-                    // NEEDS IMPLEMENTATION
+                    Inventory.AccumulatedResources.Clear();
                     break;
-                case Musician musician:
-                    // NEEDS IMPLEMENTATION
+                case Musician:
+                    // TODO : Refactor this code because it is not needed
                     break;
                 case null:
                     throw new SoundShowdownException("Opponent is null. Opponent must be an Enemy or Musician.");

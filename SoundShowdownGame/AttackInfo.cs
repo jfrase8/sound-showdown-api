@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGame
 {
@@ -45,7 +46,7 @@ namespace SoundShowdownGame
                 }
                 
                 // Instrument Upgrades
-                if (player.Instrument.Upgrades.Count != 0)
+                if (player.Instrument.Upgrades.Count == 0)
                 {
                     // Roll
                     Damage = GlobalData.RollToDamage(Roll, player.Instrument.Level, player.Instrument.Quality);

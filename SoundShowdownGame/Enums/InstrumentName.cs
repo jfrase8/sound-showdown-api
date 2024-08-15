@@ -1,4 +1,4 @@
-﻿namespace SoundShowdownGame
+﻿namespace SoundShowdownGame.Enums
 {
     public enum InstrumentName // Change later to be a database with instrument names
     {

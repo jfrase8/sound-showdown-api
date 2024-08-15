@@ -8,6 +8,8 @@ using System.Net.Http.Headers;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SoundShowdownGame.Builders;
+using SoundShowdownGame.Enums;
 using static System.Collections.Specialized.BitVector32;
 
 namespace SoundShowdownGame
@@ -22,7 +24,7 @@ namespace SoundShowdownGame
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
         private EventCard? CurrentEventCard { get; set; }
-        public List<Musician>? Musicians { get; private set; }
+        public List<Musician> Musicians { get; private set; }
 
         // Events
         public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent;
@@ -42,8 +44,8 @@ namespace SoundShowdownGame
             );
             Musicians = 
             [
-                new Musician(MusicianName.Dirty_Dan, 10, 5, StatusEffect.Poison, GlobalData.MusicianPowers[MusicianName.Dirty_Dan], 1),
-                new Musician(MusicianName.Rex_Rhythm, 20, 10, StatusEffect.Shock, GlobalData.MusicianPowers[MusicianName.Rex_Rhythm], 2),
+                new Musician(MusicianName.Dirty_Dan, 10, 5, StatusEffect.Poison, GlobalData.MusicianPowers[MusicianName.Dirty_Dan], 1, 10),
+                new Musician(MusicianName.Rex_Rhythm, 20, 10, StatusEffect.Shock, GlobalData.MusicianPowers[MusicianName.Rex_Rhythm], 2, 20),
             ];
         }
 
@@ -378,12 +380,40 @@ namespace SoundShowdownGame
             // Validations
             Player player = ValidatePlayer(playerId);
             ValidateGameState(GameState.Awaiting_Player_Attack);
+            if (player.MusicianTrackRank > Musicians.Count-1) throw new SoundShowdownException($"Index is out of bounds. There is no musician at index: {player.MusicianTrackRank}");
+
+            // Set the current musician
+            Musician CurrentMusician = Musicians[player.MusicianTrackRank];
+            CurrentMusician.AttackingPlayer = player;
 
             // Roll the die and calculate the damage dealt
             AttackInfo attackInfo = new() { Roll = Dice.RollDie() };
-            attackInfo.CalcDamage(Musicians[player.MusicianTrackRank], player);
+            attackInfo.CalcDamage(CurrentMusician, player);
 
+            // Check if musician or player was defeated
+            CurrentMusician.TakeDamage(attackInfo.Damage);
+            if (CurrentMusician.IsDefeated)
+            {
+                attackInfo.BattleResult = BattleWinner.Player;
+            }
+            else
+            {
+                player.TakeDamage(CurrentMusician.Damage, CurrentMusician);
 
+                attackInfo.BattleResult = player.IsDefeated ? BattleWinner.Musician : BattleWinner.None;
+            }
+
+            // Set Game state based on battleResult
+            CurrentGameState = attackInfo.BattleResult switch
+            {
+                BattleWinner.Player => GameState.Awaiting_Player_Choose_Action,
+                BattleWinner.Enemy => throw new SoundShowdownException("Enemy should not have won the battle."),
+                BattleWinner.None => GameState.Awaiting_Player_Attack,
+                BattleWinner.Musician => GameState.Awaiting_Player_Choose_Action,
+                _ => throw new SoundShowdownException("Invalid value for BattleResult.")
+            };
+
+            SoundShowdownEvent?.Invoke(this, new AttackEvent(player, attackInfo, null));
         }
 
         public void AttackEnemy(string playerId)

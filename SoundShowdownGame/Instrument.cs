@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGame
 {

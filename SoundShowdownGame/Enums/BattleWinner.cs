@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoundShowdownGame
+namespace SoundShowdownGame.Enums
 {
-    public enum Quality
+    public enum BattleWinner
     {
-        Exotic,
-        High,
-        Good,
-        Low
+        Player,
+        Enemy,
+        Musician,
+        None
     }
 }

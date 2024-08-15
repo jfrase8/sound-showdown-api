@@ -1,5 +1,6 @@
 ﻿using NuGet.Frameworks;
 using SoundShowdownGame;
+using SoundShowdownGame.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,30 +11,30 @@ using System.Threading.Tasks;
 namespace SoundShowdownGameTests
 {
     [TestClass]
-    public class SoundShowdownGamePlayerAttackTests
+    public class SoundShowdownGamePlayerAttackMusicianTests
     {
         [TestMethod]
-        public void AttackEnemy_InvalidState()
+        public void AttackMusician_InvalidState()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
                 .Build();
-
             try
             {
-                game.AttackEnemy("1hsdfosdn2");
+                game.AttackMusician("1hsdfosdn2");
                 Assert.Fail("Attack should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
 
             }
+
         }
 
         [TestMethod]
-        public void AttackEnemy_InvalidPlayer()
+        public void AttackMusician_InvalidPlayer()
         {
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
@@ -43,7 +44,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.AttackEnemy("5384043508");
+                game.AttackMusician("5384043508");
                 Assert.Fail("Attack should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -53,34 +54,32 @@ namespace SoundShowdownGameTests
         }
 
         [TestMethod]
-        public void AttackEnemy_NullEnemy()
+        public void AttackMusician_MusiciansIndexOutOfBounds()
         {
             SoundShowdown game = new SoundShowdownBuilder()
-                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithMusicianTrackRank(4).Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
                 .Build();
             try
             {
-                game.AttackEnemy("1hsdfosdn2");
+                game.AttackMusician("1hsdfosdn2");
                 Assert.Fail("Attack should have thrown exception.");
             }
             catch (SoundShowdownException)
             {
 
             }
+
         }
 
         [TestMethod]
         public void Attack_SuccessPlayerWon()
         {
-            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(1, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
-
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithInstrument(new InstrumentBuilder().WithLevel(3).Build()).Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
-                .WithCurrentEnemy(testEnemy)
                 .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
@@ -90,9 +89,10 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            testEnemy.AttackingPlayer = game.PlayerList[0];
+            Musician testMusician = new Musician(MusicianName.Johnny_Speed, 1, 1, StatusEffect.None, "", 1, 10);
+            game.Musicians.Insert(0, testMusician);
 
-            game.AttackEnemy("1hsdfosdn2");
+            game.AttackMusician("1hsdfosdn2");
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
@@ -100,23 +100,21 @@ namespace SoundShowdownGameTests
             AttackEvent attackEvent = (AttackEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
             Assert.AreEqual(BattleWinner.Player, attackEvent.Attack.BattleResult);
-            Assert.AreEqual(2, attackEvent.Player.Inventory.AccumulatedResources.Count);
-            Assert.IsTrue(attackEvent.Player.Inventory.AccumulatedResources.ContainsKey(ResourceName.Leather));
-            Assert.IsTrue(attackEvent.Player.Inventory.AccumulatedResources.ContainsKey(ResourceName.Vial_Of_Poison));
+            Assert.AreEqual(10, attackEvent.Player.Inventory.Coins);
+            Assert.AreEqual(1, attackEvent.Player.BodyExp);
+            Assert.AreEqual(1, attackEvent.Player.MusicianTrackRank);
+            Assert.AreEqual(attackEvent.Player, game.Musicians[0].DefeatedBy[0]);
 
-            Assert.AreEqual(GameState.Awaiting_Player_Fight_Or_End_Action, game.CurrentGameState);
+            Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
         }
 
         [TestMethod]
-        public void Attack_SuccessEnemyWon()
+        public void Attack_SuccessMusicianWon()
         {
-            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(100, 100, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
-
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
-                .WithCurrentEnemy(testEnemy)
                 .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
@@ -126,17 +124,19 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            testEnemy.AttackingPlayer = game.PlayerList[0];
+            Musician testMusician = new Musician(MusicianName.Johnny_Speed, 20, 10, StatusEffect.None, "", 1, 10);
+            game.Musicians.Insert(0, testMusician);
 
-            game.AttackEnemy("1hsdfosdn2");
+            game.AttackMusician("1hsdfosdn2");
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
             Assert.IsTrue(events[0] is AttackEvent);
             AttackEvent attackEvent = (AttackEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
-            Assert.AreEqual(BattleWinner.Enemy, attackEvent.Attack.BattleResult);
-            Assert.AreEqual(0, attackEvent.Player.Inventory.AccumulatedResources.Count);
+            Assert.AreEqual(BattleWinner.Musician, attackEvent.Attack.BattleResult);
+            Assert.AreEqual(0, attackEvent.Player.Inventory.Coins);
+            Assert.AreEqual(0, attackEvent.Player.MusicianTrackRank);
 
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
         }
@@ -144,13 +144,10 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessNeitherWon()
         {
-            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(100, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
-
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
-                .WithCurrentEnemy(testEnemy)
                 .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
@@ -160,9 +157,10 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            testEnemy.AttackingPlayer = game.PlayerList[0];
+            Musician testMusician = new Musician(MusicianName.Johnny_Speed, 20, 1, StatusEffect.None, "", 1, 10);
+            game.Musicians.Insert(0, testMusician);
 
-            game.AttackEnemy("1hsdfosdn2");
+            game.AttackMusician("1hsdfosdn2");
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
@@ -170,7 +168,8 @@ namespace SoundShowdownGameTests
             AttackEvent attackEvent = (AttackEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
             Assert.AreEqual(BattleWinner.None, attackEvent.Attack.BattleResult);
-            Assert.AreEqual(0, attackEvent.Player.Inventory.AccumulatedResources.Count);
+            Assert.AreEqual(0, attackEvent.Player.Inventory.Coins);
+            Assert.AreEqual(0, attackEvent.Player.BodyExp);
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
         }
@@ -178,13 +177,10 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessPlayerGainHealth()
         {
-            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(2, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
-
             SoundShowdown game = new SoundShowdownBuilder()
                 .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithBodyExperience(9).WithInstrument(new InstrumentBuilder().WithLevel(3).Build()).Build())
                 .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
                 .WithCurrentGameState(GameState.Awaiting_Player_Attack)
-                .WithCurrentEnemy(testEnemy)
                 .Build();
 
             List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
@@ -194,22 +190,23 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            testEnemy.AttackingPlayer = game.PlayerList[0];
+            Musician testMusician = new Musician(MusicianName.Johnny_Speed, 2, 1, StatusEffect.None, "", 1, 10);
+            game.Musicians.Insert(0, testMusician);
 
-            game.AttackEnemy("1hsdfosdn2");
+            game.AttackMusician("1hsdfosdn2");
 
             AttackEvent attackEvent = (AttackEvent)events[0];
             Assert.AreEqual(BattleWinner.Player, attackEvent.Attack.BattleResult);
             Assert.AreEqual(11, attackEvent.Player.Health);
             Assert.AreEqual(1, attackEvent.Player.BodyExp);
 
-            Assert.AreEqual(GameState.Awaiting_Player_Fight_Or_End_Action, game.CurrentGameState);
+            Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
         }
 
         [TestMethod]
         public void Attack_SuccessDrain()
         {
-            
+
         }
         [TestMethod]
         public void Attack_SuccessShock()
