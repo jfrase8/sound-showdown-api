@@ -4,8 +4,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SoundShowdownGame.Enums;
 
-namespace SoundShowdownGame
+namespace SoundShowdownGame.Builders
 {
     public class PlayerBuilder
     {
@@ -22,8 +23,10 @@ namespace SoundShowdownGame
         private Dictionary<ItemName, int> InventoryItems;
         private int InventoryCoins;
         private Enemy? Enemy;
+        private int BodyExp;
+        private int MusicianTrackRank;
 
-        public PlayerBuilder() 
+        public PlayerBuilder()
         {
             // Defaults
             Id = $"Player_{IdCounter++}";
@@ -37,6 +40,8 @@ namespace SoundShowdownGame
             InventoryCoins = 0;
             Enemy = null;
             InventoryItems = [];
+            BodyExp = 0;
+            MusicianTrackRank = 0;
         }
 
         public Player Build()
@@ -48,7 +53,7 @@ namespace SoundShowdownGame
             inventory.Coins = InventoryCoins;
             inventory.Items = InventoryItems;
 
-            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy, suitUpgrade: SuitUpgrade, accessories: Accessories);
+            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy, suitUpgrade: SuitUpgrade, accessories: Accessories, bodyExp: BodyExp, musicianTrackRank: MusicianTrackRank);
             return player;
         }
 
@@ -115,6 +120,18 @@ namespace SoundShowdownGame
         public PlayerBuilder WithInventoryItem(ItemName item, int amount)
         {
             InventoryItems[item] = amount;
+            return this;
+        }
+
+        public PlayerBuilder WithBodyExperience(int exp)
+        {
+            BodyExp = exp;
+            return this;
+        }
+
+        public PlayerBuilder WithMusicianTrackRank(int rank)
+        {
+            MusicianTrackRank = rank;
             return this;
         }
     }

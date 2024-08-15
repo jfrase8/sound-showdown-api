@@ -1,4 +1,6 @@
 using SoundShowdownGame;
+using SoundShowdownGame.Builders;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGameTests
 {

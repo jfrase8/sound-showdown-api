@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGame
 {
@@ -13,80 +14,50 @@ namespace SoundShowdownGame
         public int Damage { get; set; }
         public BattleWinner BattleResult { get; set; }
 
+        public readonly Dictionary<int, int> DamageForFists = new()
+        {
+            { 1, 0 },
+            { 2, 0 },
+            { 3, 1 },
+            { 4, 2 },
+            { 5, 3 },
+            { 6, 4 }
+        };
+
         // Calculates the damage that a player does to an enemy
-        public void CalcDamage(Enemy enemy, Player player)
+        public void CalcDamage<T>(T opponent, Player player)
         {
-            if (player.Instrument == null) throw new SoundShowdownException("Player has no instrument. Cannot calculate damage.");
-            // Components that factor into damage: roll, upgrade effects, enemy weakness/resistance, genre bonus
+            
+            // TODO : Add upgrade effect testing and implementation
 
-            // Weakness
-            if (player.Instrument.Type == enemy.Weakness) Damage += 2;
-            // Resistance
-            if (player.Instrument.Type == enemy.Resistance) Damage -= 2;
-
-            // Upgrades
-            if (player.Instrument.Upgrades.Count != 0)
+            
+            if (player.Instrument == null)
             {
-                Damage += player.Instrument.GetDamageFromUpgrades();
-
-                // Check for upgrades that effect roll
-                Roll += player.Instrument.GetRollIncreaseFromUpgrades();
-                if (Roll > 6) Roll = 6; // make sure roll does not go over 6
+                Damage = DamageForFists[Roll];
             }
-
-            // Roll
-            Damage = RollToDamage(player.Instrument.Level);
-
-            // Genre Bonus
-            foreach (GenreName genre in player.Instrument.GenreBonuses)
+            else // Player has an instrument
             {
-                if (genre == player.Genre) Damage++; break;
-            }
-        }
-
-        public int RollToDamage(int level)
-        {
-            int damage;
-            if (level == 1)
-            {
-                damage = Roll switch
+                if (opponent is Enemy enemy)
                 {
-                    1 => 0,
-                    2 => 2,
-                    3 => 3,
-                    4 => 4,
-                    5 => 5,
-                    6 => 6,
-                    _ => throw new SoundShowdownException($"Invalid roll value: {Roll}")
-                };
-            }
-            else if (level == 2)
-            {
-                damage = Roll switch
+                    // Weakness
+                    if (player.Instrument.Type == enemy.Weakness) Damage += 2;
+                    // Resistance
+                    if (player.Instrument.Type == enemy.Resistance) Damage -= 2;
+                }
+                
+                // Instrument Upgrades
+                if (player.Instrument.Upgrades.Count == 0)
                 {
-                    1 => 0,
-                    2 => 3,
-                    3 => 4,
-                    4 => 5,
-                    5 => 6,
-                    6 => 7,
-                    _ => throw new SoundShowdownException($"Invalid roll value: {Roll}")
-                };
+                    // Roll
+                    Damage = GlobalData.RollToDamage(Roll, player.Instrument.Level, player.Instrument.Quality);
+
+                    // Genre Bonus
+                    foreach (GenreName genre in player.Instrument.GenreBonuses)
+                    {
+                        if (genre == player.Genre) Damage++; break;
+                    }
+                }
             }
-            else
-            {
-                damage = Roll switch
-                {
-                    1 => 2,
-                    2 => 4,
-                    3 => 5,
-                    4 => 6,
-                    5 => 7,
-                    6 => 8,
-                    _ => throw new SoundShowdownException($"Invalid roll value: {Roll}")
-                };
-            }
-            return damage;
         }
     }
 }

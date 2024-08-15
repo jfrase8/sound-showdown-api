@@ -18,5 +18,7 @@
         PlayerBoughtItem,
         TradeWithTrader,
         RolledScavengeDice,
+        UsedItem,
+        EndTurn,
     }
 }

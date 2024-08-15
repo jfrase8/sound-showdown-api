@@ -1,4 +1,6 @@
-﻿namespace SoundShowdownGame
+﻿using SoundShowdownGame.Enums;
+
+namespace SoundShowdownGame
 {
     public class ActionChosenEvent(Player player, Action choseAction) : SoundShowdownEventArgs(SoundShowdownEventType.ActionChosen)
     {

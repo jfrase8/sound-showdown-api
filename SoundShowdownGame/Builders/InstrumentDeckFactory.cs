@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SoundShowdownGame.Enums;
 
-namespace SoundShowdownGame
+namespace SoundShowdownGame.Builders
 {
     public class InstrumentDeckFactory
     {
@@ -16,8 +17,7 @@ namespace SoundShowdownGame
                 new Instrument(InstrumentName.Electric_Guitar, InstrumentType.String, "Electric Guitar", 0, 100, 50,
                     Quality.Exotic, [GenreName.Pop, GenreName.Rock],
                     [
-                        new Upgrade(UpgradeName.Reverberating_Body, UpgradeType.Instrument_Unique, "blah blah blah", 0,
-                            0, 0, null)
+                        new Upgrade(UpgradeName.Reverberating_Body, UpgradeType.Instrument_Unique, "blah blah blah", null, null, UpgradeEffectType.Passive)
                     ]),
 
             ];

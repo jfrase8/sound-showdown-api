@@ -1,4 +1,6 @@
-﻿namespace SoundShowdownGame
+﻿using SoundShowdownGame.Enums;
+
+namespace SoundShowdownGame
 {
     public class GenreChosenEvent(Player player, GenreName genre) : SoundShowdownEventArgs(SoundShowdownEventType.GenreChosen)
     {

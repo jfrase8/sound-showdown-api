@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoundShowdownGame
+namespace SoundShowdownGame.Enums
 {
     public enum Action
     {
@@ -13,6 +13,8 @@ namespace SoundShowdownGame
         Train,
         Shop,
         Scavenge,
-        Build_Upgrades
+        Build_Upgrades,
+        ChallengeMusician,
+        ChooseGenre,
     }
 }

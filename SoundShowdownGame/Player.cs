@@ -3,10 +3,10 @@ using System;
 using System.Reflection.Metadata;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis;
+using SoundShowdownGame.Enums;
 
 namespace SoundShowdownGame
 {
-
     public class Player
     {
         public const int DefaultHealth = 10; // Starting Health Points
@@ -20,15 +20,28 @@ namespace SoundShowdownGame
         public List<Upgrade> Accessories = [];
         public Upgrade? SuitUpgrade { get; set; }
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
-
         public bool IsDefeated => Health <= 0; // True if the player runs out of health
-
+        public int MusicianTrackRank { get; set; } = 0; // How far up the musician track they have gone
+        
+        private int _BodyExp; // Interesting way to detect changes in a field value and call a method
+        public int BodyExp
+        {
+            get { return _BodyExp; }
+            set
+            {
+                if (_BodyExp != value)
+                {
+                    _BodyExp = value;
+                    if (_BodyExp >= 10) GainHealth();
+                }
+            }
+        }
         public Player(string id)
         {
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories)
+        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories, int bodyExp, int musicianTrackRank)
         {
             Id = id;
             Genre = genre;
@@ -38,8 +51,15 @@ namespace SoundShowdownGame
             Enemy = enemy;
             SuitUpgrade = suitUpgrade;
             Accessories = accessories;
+            BodyExp = bodyExp;
+            MusicianTrackRank = musicianTrackRank;
         }
 
+        public void GainHealth()
+        {
+            BodyExp -= 10;
+            Health++;
+        }
         public void TakeDamage<T>(int damage, T opponent)
         {
             Health -= damage;
@@ -57,10 +77,10 @@ namespace SoundShowdownGame
             switch (opponent)
             {
                 case Enemy enemy:
-                    // NEEDS IMPLEMENTATION
+                    Inventory.AccumulatedResources.Clear();
                     break;
-                case Musician musician:
-                    // NEEDS IMPLEMENTATION
+                case Musician:
+                    // TODO : Refactor this code because it is not needed
                     break;
                 case null:
                     throw new SoundShowdownException("Opponent is null. Opponent must be an Enemy or Musician.");
