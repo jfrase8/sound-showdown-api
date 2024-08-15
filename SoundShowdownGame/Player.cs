@@ -22,14 +22,26 @@ namespace SoundShowdownGame
         public Enemy? Enemy { get; set; } // The opponent that the player is facing
         public bool IsDefeated => Health <= 0; // True if the player runs out of health
         public int MusicianTrackRank { get; set; } = 0; // How far up the musician track they have gone
-
-
+        
+        private int _BodyExp; // Interesting way to detect changes in a field value and call a method
+        public int BodyExp
+        {
+            get { return _BodyExp; }
+            set
+            {
+                if (_BodyExp != value)
+                {
+                    _BodyExp = value;
+                    if (_BodyExp >= 10) GainHealth();
+                }
+            }
+        }
         public Player(string id)
         {
             Id = id;
         }
 
-        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories)
+        public Player(string id, GenreName? genre, int health, Instrument? instrument, Inventory inventory, Enemy? enemy, Upgrade? suitUpgrade, List<Upgrade> accessories, int bodyExp)
         {
             Id = id;
             Genre = genre;
@@ -39,8 +51,14 @@ namespace SoundShowdownGame
             Enemy = enemy;
             SuitUpgrade = suitUpgrade;
             Accessories = accessories;
+            BodyExp = bodyExp;
         }
 
+        public void GainHealth()
+        {
+            BodyExp -= 10;
+            Health++;
+        }
         public void TakeDamage<T>(int damage, T opponent)
         {
             Health -= damage;

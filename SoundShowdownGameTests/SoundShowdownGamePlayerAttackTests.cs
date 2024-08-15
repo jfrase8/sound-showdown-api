@@ -3,6 +3,7 @@ using SoundShowdownGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +15,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void AttackEnemy_InvalidState()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Choose_Genre)
+                .Build();
 
             try
             {
@@ -32,10 +35,11 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void AttackEnemy_InvalidPlayer()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
-
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .Build();
 
             try
             {
@@ -48,39 +52,57 @@ namespace SoundShowdownGameTests
             }
         }
 
-        /*[TestMethod]
+        [TestMethod]
+        public void AttackEnemy_NullEnemy()
+        {
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .Build();
+            try
+            {
+                game.AttackEnemy("1hsdfosdn2");
+                Assert.Fail("Attack should have thrown exception.");
+            }
+            catch (SoundShowdownException)
+            {
+
+            }
+        }
+
+        [TestMethod]
         public void Attack_SuccessPlayerWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
+            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(1, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
 
-            List<SoundShowdownEventArgs> events = [];
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithInstrument(new InstrumentBuilder().WithLevel(3).Build()).Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .WithCurrentEnemy(testEnemy)
+                .Build();
+
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
             game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
             {
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            testEnemy.AttackingPlayer = game.PlayerList[0];
 
-            Player player = game.GetTurnPlayer();
+            game.AttackEnemy("1hsdfosdn2");
 
-            // Create test enemy
-            Dictionary<Resource, int> loot = new Dictionary<Resource, int>
-            {
-                { new Resource("Leather", 5), 2 },
-                { new Resource("Goo", 2), 3 }
-            };
-            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 1, 1, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
-
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
-
-            game.Attack("1hsdfosdn2");
-
-            // Assert that player does not have resources in inventory yet
-            Assert.AreEqual(0, player.Inventory.ResourceInventory.Count);
-            // Assert player has 2 different resources accumulated (Leather and goo)
-            Assert.AreEqual(2, player.Inventory.AccumulatedResources.Count);
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
+            Assert.IsTrue(events[0] is AttackEvent);
+            AttackEvent attackEvent = (AttackEvent)events[0];
+            Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
+            Assert.AreEqual(BattleWinner.Player, attackEvent.Attack.BattleResult);
+            Assert.AreEqual(2, attackEvent.Player.Inventory.AccumulatedResources.Count);
+            Assert.IsTrue(attackEvent.Player.Inventory.AccumulatedResources.ContainsKey(ResourceName.Leather));
+            Assert.IsTrue(attackEvent.Player.Inventory.AccumulatedResources.ContainsKey(ResourceName.Vial_Of_Poison));
 
             Assert.AreEqual(GameState.Awaiting_Player_Fight_Or_End_Action, game.CurrentGameState);
         }
@@ -88,36 +110,33 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessEnemyWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
+            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(100, 100, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
 
-            List<SoundShowdownEventArgs> events = [];
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .WithCurrentEnemy(testEnemy)
+                .Build();
+
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
             game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
             {
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            testEnemy.AttackingPlayer = game.PlayerList[0];
 
-            Player player = game.GetTurnPlayer();
+            game.AttackEnemy("1hsdfosdn2");
 
-            // Create test enemy
-            Dictionary<Resource, int> loot = new Dictionary<Resource, int>
-            {
-                { new Resource("Leather", 5), 2 },
-                { new Resource("Goo", 2), 3 }
-            };
-            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 20, 20, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
-
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
-
-            game.Attack("1hsdfosdn2");
-
-            // Assert that player does not have resources in inventory
-            Assert.AreEqual(0, player.Inventory.ResourceInventory.Count);
-            // Assert player has no accumulated resources
-            Assert.AreEqual(0, player.Inventory.AccumulatedResources.Count);
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
+            Assert.IsTrue(events[0] is AttackEvent);
+            AttackEvent attackEvent = (AttackEvent)events[0];
+            Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
+            Assert.AreEqual(BattleWinner.Enemy, attackEvent.Attack.BattleResult);
+            Assert.AreEqual(0, attackEvent.Player.Inventory.AccumulatedResources.Count);
 
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Action, game.CurrentGameState);
         }
@@ -125,65 +144,72 @@ namespace SoundShowdownGameTests
         [TestMethod]
         public void Attack_SuccessNeitherWon()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
+            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(100, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
 
-            List<SoundShowdownEventArgs> events = [];
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .WithCurrentEnemy(testEnemy)
+                .Build();
+
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
             game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
             {
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            testEnemy.AttackingPlayer = game.PlayerList[0];
 
-            Player player = game.GetTurnPlayer();
+            game.AttackEnemy("1hsdfosdn2");
 
-            // Create test enemy
-            Dictionary<Resource, int> loot = new Dictionary<Resource, int>
-            {
-                { new Resource("Leather", 5), 2 },
-                { new Resource("Goo", 2), 3 }
-            };
-            game.EnemyDeck.Cards.Push(new Enemy("Test", "For test purposes", 20, 1, loot, InstrumentType.Brass, InstrumentType.Brass, StatusEffect.None));
-
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
-
-            game.Attack("1hsdfosdn2");
-
-            // Assert that player does not have resources in inventory
-            Assert.AreEqual(0, player.Inventory.ResourceInventory.Count);
-            // Assert player has no resources accumulated
-            Assert.AreEqual(0, player.Inventory.AccumulatedResources.Count);
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(SoundShowdownEventType.Attack, events[0].EventType);
+            Assert.IsTrue(events[0] is AttackEvent);
+            AttackEvent attackEvent = (AttackEvent)events[0];
+            Assert.AreEqual("1hsdfosdn2", attackEvent.Player.Id);
+            Assert.AreEqual(BattleWinner.None, attackEvent.Attack.BattleResult);
+            Assert.AreEqual(0, attackEvent.Player.Inventory.AccumulatedResources.Count);
 
             Assert.AreEqual(GameState.Awaiting_Player_Attack, game.CurrentGameState);
         }
 
         [TestMethod]
-        public void Attack_SuccessDrain()
+        public void Attack_SuccessPlayerGainHealth()
         {
-            SoundShowdown game = new(["1hsdfosdn2", "sad83908230"], EnemyDeckFactory.CreateShuffledDeck(), EventDeckFactory.CreateShuffledDeck());
+            Enemy testEnemy = EnemyDeckFactory.CreateTestEnemy(2, 1, InstrumentType.String, InstrumentType.Percussion, StatusEffect.None);
 
-            List<SoundShowdownEventArgs> events = [];
+            SoundShowdown game = new SoundShowdownBuilder()
+                .WithPlayer(new PlayerBuilder().WithId("1hsdfosdn2").WithBodyExperience(9).WithInstrument(new InstrumentBuilder().WithLevel(3).Build()).Build())
+                .WithPlayer(new PlayerBuilder().WithId("sad83908230").Build())
+                .WithCurrentGameState(GameState.Awaiting_Player_Attack)
+                .WithCurrentEnemy(testEnemy)
+                .Build();
+
+            List<SoundShowdownEventArgs> events = new List<SoundShowdownEventArgs>();
 
             game.SoundShowdownEvent += delegate (object? sender, SoundShowdownEventArgs args)
             {
                 events.Add(args);
             };
 
-            game.PlayerChooseGenre("1hsdfosdn2", GenreName.Pop);
-            game.PlayerChooseGenre("sad83908230", GenreName.Rock);
+            testEnemy.AttackingPlayer = game.PlayerList[0];
 
-            Player player = game.GetTurnPlayer();
+            game.AttackEnemy("1hsdfosdn2");
 
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Action.Fight_Enemies);
+            AttackEvent attackEvent = (AttackEvent)events[0];
+            Assert.AreEqual(BattleWinner.Player, attackEvent.Attack.BattleResult);
+            Assert.AreEqual(11, attackEvent.Player.Health);
+            Assert.AreEqual(1, attackEvent.Player.BodyExp);
 
-            // Give player drain attack
-           // player.Instrument.
+            Assert.AreEqual(GameState.Awaiting_Player_Fight_Or_End_Action, game.CurrentGameState);
+        }
 
-            //game.Attack("1hsdfosdn2");
-
-
+        [TestMethod]
+        public void Attack_SuccessDrain()
+        {
+            
         }
         [TestMethod]
         public void Attack_SuccessShock()
@@ -199,6 +225,6 @@ namespace SoundShowdownGameTests
         public void Attack_SuccessPoison()
         {
 
-        }*/
+        }
     }
 }

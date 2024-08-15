@@ -93,11 +93,13 @@ namespace SoundShowdownGameTests
             Assert.AreEqual("sad83908230", game.PlayerList?[0].Id);
 
             Assert.AreEqual(1, events.Count);
-            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[0].EventType);
-            Assert.IsTrue(events[0] is GenreChosenEvent);
-            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[0];
-            Assert.AreEqual("1hsdfosdn2", genreChosenEvent.Player.Id);
-            Assert.AreEqual(GenreName.Pop, genreChosenEvent.Genre);
+            Assert.AreEqual(SoundShowdownEventType.EndTurn, events[0].EventType);
+            Assert.IsTrue(events[0] is EndTurnEvent);
+            EndTurnEvent endTurnEvent = (EndTurnEvent)events[0];
+            Assert.AreEqual("1hsdfosdn2", endTurnEvent.CurrentPlayer.Id);
+            Assert.AreEqual("sad83908230", endTurnEvent.NextPlayer.Id);
+            Assert.AreEqual(GenreName.Pop, endTurnEvent.CurrentPlayer.Genre);
+            Assert.AreEqual(SoundShowdownGame.Action.ChooseGenre, endTurnEvent.Action);
         }
 
         [TestMethod]
@@ -124,11 +126,13 @@ namespace SoundShowdownGameTests
             Assert.AreEqual(GenreName.Pop, game.PlayerList?.Find(player => player.Id == "1hsdfosdn2")?.Genre);
 
             Assert.AreEqual(1, events.Count);
-            Assert.AreEqual(SoundShowdownEventType.GenreChosen, events[0].EventType);
-            Assert.IsTrue(events[0] is GenreChosenEvent);
-            GenreChosenEvent genreChosenEvent = (GenreChosenEvent)events[0];
-            Assert.AreEqual("sad83908230", genreChosenEvent.Player.Id);
-            Assert.AreEqual(GenreName.Rock, genreChosenEvent.Genre);
+            Assert.AreEqual(SoundShowdownEventType.EndTurn, events[0].EventType);
+            Assert.IsTrue(events[0] is EndTurnEvent);
+            EndTurnEvent endTurnEvent = (EndTurnEvent)events[0];
+            Assert.AreEqual("sad83908230", endTurnEvent.CurrentPlayer.Id);
+            Assert.AreEqual("1hsdfosdn2", endTurnEvent.NextPlayer.Id);
+            Assert.AreEqual(GenreName.Rock, endTurnEvent.CurrentPlayer.Genre);
+            Assert.AreEqual(SoundShowdownGame.Action.ChooseGenre, endTurnEvent.Action);
         }        
     }
 }

@@ -22,7 +22,7 @@ namespace SoundShowdownGame
         private int EnemiesDefeated { get; set; } = 0;
         private Enemy? CurrentEnemy { get; set; }
         private EventCard? CurrentEventCard { get; set; }
-        public Musician[] Musicians { get; private set; }
+        public List<Musician>? Musicians { get; private set; }
 
         // Events
         public event EventHandler<SoundShowdownEventArgs>? SoundShowdownEvent;
@@ -47,7 +47,7 @@ namespace SoundShowdownGame
             ];
         }
 
-        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop, Musician[] musicians)
+        public SoundShowdown(List<Player> players, Deck<Enemy> enemyDeck, Deck<EventCard> eventDeck, GameState currentGameState, int enemiesDefeated, Enemy? currentEnemy, Shop gameShop, List<Musician> musicians)
         {
             PlayerList = players;
             EnemyDeck = enemyDeck;
@@ -67,15 +67,15 @@ namespace SoundShowdownGame
             // Set player's genre
             player.Genre = genreName;
 
-            // Send event to all players (NOT BEING IMPLEMENTED HERE)
-            SoundShowdownEvent?.Invoke(this, new GenreChosenEvent(player, genreName));
+            // Send event to all players
+            //SoundShowdownEvent?.Invoke(this, new GenreChosenEvent(player, genreName));
 
             // Check if all players have chose a genre
             if (PlayerList.All(p => p.Genre != null))
             {
                 CurrentGameState = GameState.Awaiting_Player_Choose_Action;
             }
-            OnEndOfTurn();
+            OnEndOfTurn(Action.ChooseGenre);
         }
         public Player GetTurnPlayer()
         {
@@ -116,6 +116,12 @@ namespace SoundShowdownGame
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
             }
+        }
+
+        public void EndTurn(string playerId, Action action)
+        {
+            Player player = ValidatePlayer(playerId);
+            OnEndOfTurn(action);
         }
 
         public void RollScavengeDice(string playerId)
@@ -415,7 +421,7 @@ namespace SoundShowdownGame
                 _ => throw new SoundShowdownException("Invalid value for BattleResult.")
             };
 
-            SoundShowdownEvent?.Invoke(this, new AttackEvent(player, attackInfo));
+            SoundShowdownEvent?.Invoke(this, new AttackEvent(player, attackInfo, EnemiesDefeated));
         }
 
         // Called if the player decides to not fight any more enemies
@@ -428,10 +434,10 @@ namespace SoundShowdownGame
             // Player adds accumulated resources to inventory
             player.Inventory.GainResources();
 
-            OnEndOfTurn();
+            OnEndOfTurn(Action.Fight_Enemies);
         }
 
-        private void OnEndOfTurn()
+        private void OnEndOfTurn(Action action)
         {
             // Set new turn order
             Player currentPlayer = PlayerList[0];
@@ -442,12 +448,7 @@ namespace SoundShowdownGame
             CurrentEnemy = null;
             EnemiesDefeated = 0;
 
-            StartNewTurn();
-        }
-
-        private void StartNewTurn()
-        {
-            // TODO : Switch turn to new player
+            SoundShowdownEvent?.Invoke(this, new EndTurnEvent(currentPlayer, PlayerList[0], action));
         }
 
         private Player ValidatePlayer(string playerId)

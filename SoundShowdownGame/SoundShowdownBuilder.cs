@@ -15,6 +15,7 @@ namespace SoundShowdownGame
         private int EnemiesDefeated;
         private Enemy? CurrentEnemy;
         private Shop? GameShop;
+        private List<Musician>? Musicians;
 
         public SoundShowdownBuilder() 
         {
@@ -26,6 +27,7 @@ namespace SoundShowdownGame
             EnemiesDefeated = 0;
             CurrentEnemy = null;
             GameShop = null;
+            Musicians = null;
         }
 
         public SoundShowdown Build()
@@ -51,7 +53,14 @@ namespace SoundShowdownGame
                 [new Item(ItemName.Food, "Heals you", 10), new Item(ItemName.Antidote, "Gets rid of all poison counters", 10)]
             );
 
-            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, eventDeck: EventDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy, gameShop: GameShop);
+            // Create musicians if not defined
+            Musicians =
+            [
+                new Musician(MusicianName.Dirty_Dan, 10, 5, StatusEffect.Poison, GlobalData.MusicianPowers[MusicianName.Dirty_Dan], 1),
+                new Musician(MusicianName.Rex_Rhythm, 20, 10, StatusEffect.Shock, GlobalData.MusicianPowers[MusicianName.Rex_Rhythm], 2),
+            ];
+
+            SoundShowdown game = new SoundShowdown(players: Players, enemyDeck: EnemyDeck, eventDeck: EventDeck, currentGameState: CurrentGameState, enemiesDefeated: EnemiesDefeated, currentEnemy: CurrentEnemy, gameShop: GameShop, musicians: Musicians);
             return game;
         }
 
@@ -82,6 +91,5 @@ namespace SoundShowdownGame
             CurrentEnemy = currentEnemy;
             return this;
         }
-
     }
 }

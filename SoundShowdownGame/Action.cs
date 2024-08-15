@@ -14,6 +14,7 @@ namespace SoundShowdownGame
         Shop,
         Scavenge,
         Build_Upgrades,
-        ChallengeMusician
+        ChallengeMusician,
+        ChooseGenre,
     }
 }

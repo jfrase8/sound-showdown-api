@@ -101,5 +101,17 @@ namespace SoundShowdownGame
 
             return new Deck<Enemy>("Enemy Deck", "Deck full of enemy cards.", new Stack<Enemy>(cards));
         }
+
+        public static Enemy CreateTestEnemy(int health, int damage, InstrumentType weakness, InstrumentType resistance, StatusEffect statusEffect)
+        {
+            // Test Loot
+            Dictionary<ResourceName, int> testLoot = new Dictionary<ResourceName, int>
+            {
+                { ResourceName.Leather, 2 },
+                { ResourceName.Vial_Of_Poison, 1 }
+            };
+
+            return new Enemy("Test Enemy", "Enemy created for testing", health, damage, testLoot, weakness, resistance, statusEffect);
+        }
     }
 }

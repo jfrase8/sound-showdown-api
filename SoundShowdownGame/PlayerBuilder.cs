@@ -22,6 +22,7 @@ namespace SoundShowdownGame
         private Dictionary<ItemName, int> InventoryItems;
         private int InventoryCoins;
         private Enemy? Enemy;
+        private int BodyExp;
 
         public PlayerBuilder() 
         {
@@ -37,6 +38,7 @@ namespace SoundShowdownGame
             InventoryCoins = 0;
             Enemy = null;
             InventoryItems = [];
+            BodyExp = 0;
         }
 
         public Player Build()
@@ -48,7 +50,7 @@ namespace SoundShowdownGame
             inventory.Coins = InventoryCoins;
             inventory.Items = InventoryItems;
 
-            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy, suitUpgrade: SuitUpgrade, accessories: Accessories);
+            Player player = new Player(id: Id, genre: Genre, health: Health, instrument: Instrument, inventory: inventory, enemy: Enemy, suitUpgrade: SuitUpgrade, accessories: Accessories, bodyExp: BodyExp);
             return player;
         }
 
@@ -115,6 +117,12 @@ namespace SoundShowdownGame
         public PlayerBuilder WithInventoryItem(ItemName item, int amount)
         {
             InventoryItems[item] = amount;
+            return this;
+        }
+
+        public PlayerBuilder WithBodyExperience(int exp)
+        {
+            BodyExp = exp;
             return this;
         }
     }
