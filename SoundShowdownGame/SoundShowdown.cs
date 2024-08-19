@@ -77,14 +77,14 @@ namespace SoundShowdownGame
             {
                 CurrentGameState = GameState.Awaiting_Player_Choose_Action;
             }
-            OnEndOfTurn(Action.ChooseGenre);
+            OnEndOfTurn(GameAction.ChooseGenre);
         }
         public Player GetTurnPlayer()
         {
             return PlayerList[0];
         }
 
-        public void PlayerChooseAction(string playerId, Action action)
+        public void PlayerChooseAction(string playerId, GameAction action)
         {
             // Validate player and game state
             Player player = ValidatePlayer(playerId);
@@ -92,35 +92,35 @@ namespace SoundShowdownGame
 
             switch (action)
             {
-                case Action.Fight_Enemies:
+                case GameAction.Fight_Enemies:
                     CurrentGameState = GameState.Awaiting_Player_Attack;
                     CurrentEnemy = DrawEnemyCard(player);
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                case Action.Build_Upgrades:
+                case GameAction.Build_Upgrades:
                     CurrentGameState = GameState.Awaiting_Player_Choose_Upgrade;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                case Action.ChallengeMusician:
+                case GameAction.ChallengeMusician:
                     CurrentGameState = GameState.Awaiting_Player_Attack;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                case Action.Train:
+                case GameAction.Train:
                     CurrentGameState = GameState.Awaiting_Player_Roll_For_Training;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                case Action.Shop:
+                case GameAction.Shop:
                     CurrentGameState = GameState.Awaiting_Player_Shop;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
-                case Action.Scavenge:
+                case GameAction.Scavenge:
                     CurrentGameState = GameState.Awaiting_Player_Roll_Scavenge_Dice;
                     SoundShowdownEvent?.Invoke(this, new ActionChosenEvent(player, action));
                     break;
             }
         }
 
-        public void EndTurn(string playerId, Action action)
+        public void EndTurn(string playerId, GameAction action)
         {
             Player player = ValidatePlayer(playerId);
             OnEndOfTurn(action);
@@ -464,10 +464,10 @@ namespace SoundShowdownGame
             // Player adds accumulated resources to inventory
             player.Inventory.GainResources();
 
-            OnEndOfTurn(Action.Fight_Enemies);
+            OnEndOfTurn(GameAction.Fight_Enemies);
         }
 
-        private void OnEndOfTurn(Action action)
+        private void OnEndOfTurn(GameAction action)
         {
             // Set new turn order
             Player currentPlayer = PlayerList[0];

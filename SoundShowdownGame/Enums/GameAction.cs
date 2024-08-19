@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SoundShowdownGame.Enums
 {
-    public enum Action
+    public enum GameAction
     {
         Fight_Enemies,
         Challenge_Musician,

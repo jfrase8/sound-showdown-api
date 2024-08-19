@@ -1,4 +1,5 @@
 ﻿using SoundShowdownGame;
+using SoundShowdownGame.Builders;
 using SoundShowdownGame.Enums;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.Action.Build_Upgrades);
+                game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.GameAction.Build_Upgrades);
                 Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -42,7 +43,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("5384043508", SoundShowdownGame.Enums.Action.Build_Upgrades);
+                game.PlayerChooseAction("5384043508", SoundShowdownGame.Enums.GameAction.Build_Upgrades);
                 Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -62,7 +63,7 @@ namespace SoundShowdownGameTests
 
             try
             {
-                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Enums.Action.Build_Upgrades);
+                game.PlayerChooseAction("sad83908230", SoundShowdownGame.Enums.GameAction.Build_Upgrades);
                 Assert.Fail("PlayerChooseAction should have thrown exception.");
             }
             catch (SoundShowdownException)
@@ -87,7 +88,7 @@ namespace SoundShowdownGameTests
                 events.Add(args);
             };
 
-            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.Action.Build_Upgrades);
+            game.PlayerChooseAction("1hsdfosdn2", SoundShowdownGame.Enums.GameAction.Build_Upgrades);
 
             Assert.AreEqual(GameState.Awaiting_Player_Choose_Upgrade, game.CurrentGameState);
 
@@ -96,7 +97,7 @@ namespace SoundShowdownGameTests
             Assert.IsTrue(events[0] is ActionChosenEvent);
             ActionChosenEvent actionChosenEvent = (ActionChosenEvent)events[0];
             Assert.AreEqual("1hsdfosdn2", actionChosenEvent.Player.Id);
-            Assert.AreEqual(SoundShowdownGame.Enums.Action.Build_Upgrades, actionChosenEvent.ChoseAction);
+            Assert.AreEqual(SoundShowdownGame.Enums.GameAction.Build_Upgrades, actionChosenEvent.ChoseAction);
         }
     }
 }
