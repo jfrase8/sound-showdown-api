@@ -1,6 +1,27 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Logging;
+using System.Security.Principal;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Set up authentication via Microsoft Identity
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(options =>
+    {
+        builder.Configuration.Bind("AzureAdB2C", options);
+        options.TokenValidationParameters.NameClaimType = "name";
+
+    },
+    options =>
+    {
+        builder.Configuration.Bind("AzureAdB2C", options);
+    });
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -18,8 +39,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+// TEMPORARY - DO NOT CHECK IN
+//IdentityModelEventSource.ShowPII = true;
+//IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 
 app.Run();
