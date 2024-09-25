@@ -13,23 +13,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(options =>
     {
         builder.Configuration.Bind("AzureAdB2C", options);
-        options.TokenValidationParameters.NameClaimType = "sub";
+        options.TokenValidationParameters.NameClaimType = "name";
 
         options.Events = new JwtBearerEvents
         {
             OnChallenge = context =>
             {
-                throw new Exception("Challenge: " + context.AuthenticateFailure?.Message);
+                Console.WriteLine(context.AuthenticateFailure?.Message);
+                return Task.CompletedTask;
             },
 
             OnForbidden = context =>
             {
-                throw new Exception("Forbidden.");
+                return Task.CompletedTask;
             },
 
             OnAuthenticationFailed = context =>
             {
-                throw new Exception("Authentication Failed: " + context.Exception?.Message);
+                Console.WriteLine(context.Exception?.Message);
+                return Task.CompletedTask;
             }
         };
     },

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoundShowdownAPI.Models;
+using System.Security.Claims;
 
 namespace SoundShowdownAPI.Controllers
 {
@@ -27,9 +28,24 @@ namespace SoundShowdownAPI.Controllers
             }
 
             var user = new User();
+            user.Id = this.User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
             user.Name = this.User.Identity.Name;
-            user.Email = "unimplemented";
+            user.Emails = ParseEmails(this.User.Claims.First(claim => claim.Type == "emails").Value);
+            user.GivenName = this.User.Claims.First(claim => claim.Type == ClaimTypes.GivenName).Value;
+            user.FamilyName = this.User.Claims.First(claim => claim.Type == ClaimTypes.Surname).Value;
             return user;
+        }
+
+        private List<String> ParseEmails(string emails)
+        {
+            var result = new List<String>();
+            var emailArray = emails.Split(",");
+            for (int i = 0; i < emailArray.Length; i++) 
+            {
+                emailArray[i] = emailArray[i].Trim();
+                if (emailArray[i] != "") result.Add(emailArray[i]);
+            }
+            return result;
         }
     }
 }
